@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --primary: #6b21a8;
+    --primary-dark: #4c1d95;
+    --primary-light: #9333ea;
+    --accent: #d8b4fe;
+    --bg-main: #ffffff;
+    --bg-soft: #fbf7ff;
+    --text-main: #1e1b4b;
+    --text-muted: #6b7280;
+    --nav-bg: #4c1d95;
+    --radius-xl: 32px;
+    --radius-lg: 24px;
+    --shadow-premium: 0 10px 40px -10px rgba(107, 33, 168, 0.2);
+}
+
+body {
+    @apply bg-[#fbf7ff] text-[#1e1b4b] antialiased min-h-screen font-outfit;
+}
+
+.glass-card {
+    @apply bg-white/80 backdrop-blur-lg border border-white/20 shadow-premium;
+}
+
+.purple-gradient {
+    background: linear-gradient(135deg, #6b21a8 0%, #4c1d95 100%);
+}
+
+.purple-text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #6b21a8 0%, #9333ea 100%);
+}
+
+.bottom-nav-item {
+    @apply flex flex-col items-center justify-center gap-1 transition-all duration-300;
+}
+
+.bottom-nav-item.active {
+    @apply text-white scale-110;
+}
+
+.bottom-nav-item.inactive {
+    @apply text-white/60 hover:text-white/80;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-purple-200 rounded-full;
+}
+
+/* Animations */
+@keyframes pulse-slow {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 4s infinite ease-in-out;
+}

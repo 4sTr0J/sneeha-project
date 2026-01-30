@@ -1,0 +1,173 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Sparkles, Heart, MessageSquare, Shield, ChevronRight, Play } from 'lucide-react';
+import logo from '../assets/logo.png';
+
+export default function Home() {
+    return (
+        <div style={{
+            width: '100%',
+            minHeight: '100vh',
+            background: 'linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%)',
+            color: 'white',
+            display: 'flex',
+            flexDirection: 'column',
+            overflowX: 'hidden'
+        }}>
+            {/* Navbar */}
+            <nav style={{
+                padding: '10px 80px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                background: 'rgba(26, 11, 46, 0.8)',
+                backdropFilter: 'blur(10px)',
+                position: 'sticky',
+                top: 0,
+                zIndex: 1000,
+                borderBottom: '1px solid rgba(255,255,255,0.05)'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <img src={logo} alt="Sneha Logo" style={{ height: '120px', objectFit: 'contain' }} />
+                </div>
+                <div style={{ display: 'flex', gap: '40px', alignItems: 'center' }}>
+                    <Link to="/login" style={{ color: 'white', textDecoration: 'none', fontWeight: '700', fontSize: '15px', opacity: 0.8 }} className="hover-opacity">Login</Link>
+                    <Link to="/register" style={{
+                        background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
+                        padding: '12px 30px',
+                        borderRadius: '15px',
+                        color: 'white',
+                        textDecoration: 'none',
+                        fontWeight: '800',
+                        fontSize: '15px',
+                        boxShadow: '0 10px 20px rgba(109, 40, 217, 0.3)'
+                    }} className="hover-up">Join Community</Link>
+                </div>
+            </nav>
+
+            {/* Hero Section */}
+            <main style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '80px 80px 120px'
+            }}>
+                <div style={{
+                    maxWidth: '1300px',
+                    width: '100%',
+                    display: 'grid',
+                    gridTemplateColumns: '55% 45%',
+                    gap: '60px',
+                    alignItems: 'center'
+                }}>
+                    <div style={{ zIndex: 2 }}>
+                        <div style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            background: 'rgba(139, 92, 246, 0.1)',
+                            padding: '8px 20px',
+                            borderRadius: '30px',
+                            border: '1px solid rgba(139, 92, 246, 0.2)',
+                            color: 'var(--primary-light)',
+                            fontSize: '14px',
+                            fontWeight: '700',
+                            marginBottom: '30px'
+                        }}>
+                            <Sparkles size={16} />
+                            SRI LANKA'S #1 SUPPORT PLATFORM
+                        </div>
+                        <h1 style={{ fontSize: '80px', fontWeight: '900', lineHeight: '1.05', marginBottom: '30px', letterSpacing: '-2px' }}>
+                            Healing through <br />
+                            <span style={{
+                                background: 'linear-gradient(135deg, #A78BFA, #EC4899)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                                color: 'transparent',
+                                display: 'inline-block'
+                            }}>Compassion</span>
+                        </h1>
+                        <p style={{ fontSize: '22px', color: 'var(--text-secondary)', marginBottom: '45px', lineHeight: '1.6', maxWidth: '600px', opacity: 0.9 }}>
+                            Empowering patients and caregivers with dedicated support groups,
+                            AI healing companions, and curated wellness resources.
+                        </p>
+                        <div style={{ display: 'flex', gap: '20px' }}>
+                            <Link to="/register" className="btn btn-primary" style={{ padding: '20px 45px', fontSize: '18px', textDecoration: 'none', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                Start Your Journey <ChevronRight size={20} />
+                            </Link>
+                            <button className="btn" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '20px 40px', fontSize: '18px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{ background: 'white', borderRadius: '50%', padding: '5px', color: 'var(--bg-darker)' }}><Play size={12} fill="currentColor" /></div>
+                                See How it Works
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
+                        {/* Abstract Background Glows */}
+                        <div style={{ position: 'absolute', width: '600px', height: '600px', background: 'var(--primary)', filter: 'blur(150px)', opacity: 0.2, zIndex: 0 }}></div>
+
+                        {/* Shield Shape Visual */}
+                        <div style={{
+                            width: '520px',
+                            height: '560px',
+                            background: 'rgba(255,255,255,0.03)',
+                            backdropFilter: 'blur(30px)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '50px',
+                            clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 30px 60px rgba(0,0,0,0.5)',
+                            position: 'relative',
+                            zIndex: 1
+                        }}>
+                            <div style={{ textAlign: 'center' }}>
+                                <img src={logo} alt="Sneha Main Logo" style={{ width: '500px', filter: 'drop-shadow(0 0 50px rgba(139,92,246,0.8))' }} />
+                                <div style={{ width: '60px', height: '6px', background: 'var(--accent)', margin: '40px auto 20px', borderRadius: '3px' }}></div>
+                                <p style={{ color: 'var(--primary-light)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '14px' }}>Your Safe Space</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            {/* Feature Section */}
+            <section style={{
+                padding: '100px 80px',
+                background: 'rgba(0,0,0,0.2)',
+                borderTop: '1px solid rgba(255,255,255,0.05)'
+            }}>
+                <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '40px' }}>
+                    <FeatureBox icon={<Sparkles size={32} />} title="AI Compassion" desc="24/7 Emotional Support" />
+                    <FeatureBox icon={<Heart size={32} />} title="Music Healing" desc="Soundscapes for Peace" />
+                    <FeatureBox icon={<MessageSquare size={32} />} title="Peer Groups" desc="Shared Journey Support" />
+                    <FeatureBox icon={<Shield size={32} />} title="Safe & Private" desc="End-to-End Encryption" />
+                </div>
+            </section>
+        </div>
+    );
+}
+
+function FeatureBox({ icon, title, desc }) {
+    return (
+        <div style={{ textAlign: 'center' }}>
+            <div style={{
+                width: '70px',
+                height: '70px',
+                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.1))',
+                borderRadius: '22px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--primary-light)',
+                margin: '0 auto 25px',
+                border: '1px solid rgba(139,92,246,0.1)'
+            }}>{icon}</div>
+            <h4 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '10px' }}>{title}</h4>
+            <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: '1.5' }}>{desc}</p>
+        </div>
+    );
+}
