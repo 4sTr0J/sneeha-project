@@ -93,7 +93,7 @@ export default function Register() {
                             value={formData.supportType}
                             onChange={(e) => setFormData({ ...formData, supportType: e.target.value })}
                         >
-                            <option value="Cancer Support">Cancer Support</option>
+                            <option value="Cancer Support">Cancer Support1</option>
                             <option value="Chronic Illness">Chronic Illness</option>
                             <option value="Caregiver Support">Caregiver Support</option>
                         </select>
