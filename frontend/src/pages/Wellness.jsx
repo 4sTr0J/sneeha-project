@@ -89,29 +89,142 @@ export default function Wellness() {
 }
 
 function WellnessCard({ item }) {
+    const isMeditation = item.type === 'meditation';
+
+    // Generate a unique gradient based on the title
+    const getGradient = (title) => {
+        const colors = [
+            'linear-gradient(135deg, #6D28D9 0%, #EC4899 100%)',
+            'linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%)',
+            'linear-gradient(135deg, #10B981 0%, #3B82F6 100%)',
+            'linear-gradient(135deg, #F59E0B 0%, #EF4444 100%)',
+            'linear-gradient(135deg, #6366F1 0%, #A855F7 100%)'
+        ];
+        const index = title.length % colors.length;
+        return colors[index];
+    };
+
     return (
-        <div className="desktop-card" style={{ textAlign: 'left', padding: 0, overflow: 'hidden' }}>
-            <div style={{ height: '180px', background: 'var(--bg-darker)', position: 'relative' }}>
-                {/* Visual placeholder */}
-                <div style={{ position: 'absolute', inset: 0, opacity: 0.3, background: 'linear-gradient(45deg, var(--primary), var(--accent))' }}></div>
-                <div style={{ position: 'absolute', bottom: '15px', left: '15px', background: 'rgba(255,255,255,0.2)', padding: '5px 12px', borderRadius: '8px', color: 'white', fontSize: '11px', fontWeight: '800', textTransform: 'uppercase' }}>
+        <div className="desktop-card wellness-card-hover" style={{
+            textAlign: 'left',
+            padding: 0,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            border: 'none',
+            background: 'white',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}>
+            <div style={{ height: '200px', background: 'var(--bg-darker)', position: 'relative' }}>
+                {/* Visual placeholder with gradient and icon */}
+                <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    opacity: 0.8,
+                    background: getGradient(item.title)
+                }}></div>
+                <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%)'
+                }}></div>
+
+                <div style={{
+                    position: 'absolute',
+                    top: '15px',
+                    left: '15px',
+                    background: 'rgba(255,255,255,0.2)',
+                    backdropFilter: 'blur(10px)',
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    color: 'white',
+                    fontSize: '10px',
+                    fontWeight: '900',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    border: '1px solid rgba(255,255,255,0.3)'
+                }}>
                     {item.type}
                 </div>
-                <button style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '50px', height: '50px', borderRadius: '50%', background: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', cursor: 'pointer' }}>
-                    <Play fill="var(--primary)" size={20} />
+
+                <div style={{
+                    position: 'absolute',
+                    top: '15px',
+                    right: '15px',
+                    color: 'white',
+                    opacity: 0.8
+                }}>
+                    {isMeditation ? <Heart size={20} /> : <Play size={20} />}
+                </div>
+
+                <button className="play-button-hover" style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    background: 'white',
+                    border: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--primary)',
+                    cursor: 'pointer',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
+                }}>
+                    <Play fill="var(--primary)" size={24} />
                 </button>
             </div>
-            <div style={{ padding: '25px' }}>
-                <h3 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '10px' }}>{item.title}</h3>
-                <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: '1.6', marginBottom: '20px' }}>{item.description}</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#9CA3AF', fontSize: '13px' }}>
-                        <Clock size={14} />
-                        {item.duration || '5:00'}
+
+            <div style={{ padding: '25px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+                    <h3 style={{ fontSize: '22px', fontWeight: '900', color: 'var(--bg-darker)', margin: 0 }}>{item.title}</h3>
+                </div>
+                <p style={{ fontSize: '15px', color: '#64748B', lineHeight: '1.6', marginBottom: 'auto', paddingBottom: '20px' }}>
+                    {item.description}
+                </p>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '15px', borderTop: '1px solid #F1F5F9' }}>
+                    <div style={{
+                        background: 'var(--primary)',
+                        color: 'white',
+                        padding: '6px 15px',
+                        borderRadius: '20px',
+                        fontSize: '13px',
+                        fontWeight: '800',
+                        boxShadow: '0 4px 10px rgba(109, 40, 217, 0.2)'
+                    }}>
+                        {item.duration || '5:00 min'}
                     </div>
-                    <button style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer' }}>
-                        <Heart size={20} />
-                    </button>
+
+                    <div style={{ display: 'flex', gap: '15px' }}>
+                        <button style={{
+                            background: '#F1F5F9',
+                            border: 'none',
+                            padding: '8px',
+                            borderRadius: '10px',
+                            color: '#64748B',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <Filter size={18} />
+                        </button>
+                        <button style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#EF4444',
+                            cursor: 'pointer',
+                            padding: '0'
+                        }}>
+                            <Heart size={24} />
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

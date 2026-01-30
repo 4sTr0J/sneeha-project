@@ -1,132 +1,114 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const WellnessContent = require('../models/WellnessContent');
-const Community = require('../models/Community');
-
-dotenv.config();
+const { WellnessContent } = require('../models');
+const sequelize = require('../config/db');
 
 const wellnessData = [
+    // Relaxation Music
     {
-        title: "Peaceful Morning Meditation",
-        description: "Start your day with calm and clarity through guided breathing",
+        title: "Weightless",
+        description: "Ambient, Soft Instrumental, Scientific relaxation tones",
+        type: "music",
+        duration: "8:20",
+        category: "Relaxation",
+        tags: JSON.stringify(["ambient", "instrumental", "scientific"])
+    },
+    {
+        title: "Watermark - Enya",
+        description: "Soft Vocals + ambient Sound",
+        type: "music",
+        duration: "8:00",
+        category: "Relaxation",
+        tags: JSON.stringify(["vocals", "ambient", "enya"])
+    },
+    {
+        title: "Strawberry Swing",
+        description: "Chill pop, feel-good, light instrumental background",
+        type: "music",
+        duration: "10:00",
+        category: "Relaxation",
+        tags: JSON.stringify(["chill", "pop", "feel-good"])
+    },
+    {
+        title: "Electra - Air stream",
+        description: "Chill-out, ambient electronic",
+        type: "music",
+        duration: "15:00",
+        category: "Relaxation",
+        tags: JSON.stringify(["chill-out", "ambient", "electronic"])
+    },
+    {
+        title: "Mellomaniac",
+        description: "Chill-out, ambient beats",
+        type: "music",
+        duration: "11:00",
+        category: "Relaxation",
+        tags: JSON.stringify(["beats", "ambient", "chill-out"])
+    },
+    {
+        title: "Clair de lune",
+        description: "Classical piano",
+        type: "music",
+        duration: "5:00",
+        category: "Relaxation",
+        tags: JSON.stringify(["classical", "piano", "calm"])
+    },
+    // Guided Meditation
+    {
+        title: "Morning Meditation",
+        description: "Start your day with positive energy",
         type: "meditation",
-        duration: "10 min",
-        category: "morning",
-        tags: ["breathing", "mindfulness", "morning"]
+        duration: "10:00",
+        category: "Beginner",
+        tags: JSON.stringify(["morning", "energy", "beginner"])
     },
     {
-        title: "Healing Sleep Sounds",
-        description: "Gentle nature sounds to help you rest and recover",
-        type: "music",
-        duration: "30 min",
-        category: "sleep",
-        tags: ["sleep", "nature", "relaxation"]
-    },
-    {
-        title: "Strength Affirmations",
-        description: "Positive affirmations for courage and resilience",
-        type: "affirmation",
-        duration: "5 min",
-        category: "motivation",
-        tags: ["affirmations", "strength", "positivity"]
-    },
-    {
-        title: "Ocean Waves Relaxation",
-        description: "Calming ocean sounds for deep relaxation",
-        type: "music",
-        duration: "45 min",
-        category: "relaxation",
-        tags: ["ocean", "nature", "calm"]
-    },
-    {
-        title: "Body Scan Meditation",
-        description: "Release tension and connect with your body",
+        title: "Body Scan Relaxation",
+        description: "Release tension from head to toe",
         type: "meditation",
-        duration: "15 min",
-        category: "healing",
-        tags: ["body scan", "healing", "awareness"]
+        duration: "8:00",
+        category: "Intermediate",
+        tags: JSON.stringify(["body scan", "relaxation", "tension"])
     },
     {
-        title: "Gentle Piano Melodies",
-        description: "Soothing piano music for peaceful moments",
-        type: "music",
-        duration: "25 min",
-        category: "relaxation",
-        tags: ["piano", "instrumental", "peaceful"]
+        title: "Stress Relief",
+        description: "Quick relaxation for busy days",
+        type: "meditation",
+        duration: "10:00",
+        category: "Advanced",
+        tags: JSON.stringify(["stress", "quick", "advanced"])
     },
     {
-        title: "Breathing Exercise",
-        description: "Simple breathing techniques to reduce anxiety",
-        type: "breathing",
-        duration: "8 min",
-        category: "anxiety",
-        tags: ["breathing", "anxiety", "calm"]
+        title: "Mindful Breathing",
+        description: "Focus on your breath and be present",
+        type: "meditation",
+        duration: "11:00",
+        category: "All Levels",
+        tags: JSON.stringify(["breathing", "mindful", "presence"])
     },
     {
-        title: "Forest Sounds",
-        description: "Immerse yourself in the tranquility of nature",
-        type: "music",
-        duration: "60 min",
-        category: "nature",
-        tags: ["forest", "birds", "nature"]
-    }
-];
-
-const communityData = [
-    {
-        name: "Cancer Warriors",
-        description: "A supportive community for those battling cancer",
-        illnessType: "Cancer Support",
-        memberCount: 127,
-        isPrivate: false
+        title: "Healing Visualization",
+        description: "Visualize healing & wellness",
+        type: "meditation",
+        duration: "14:00",
+        category: "Basic",
+        tags: JSON.stringify(["healing", "visualization", "wellness"])
     },
     {
-        name: "Chronic Pain Support",
-        description: "Share experiences and coping strategies for chronic pain",
-        illnessType: "Chronic Illness",
-        memberCount: 89,
-        isPrivate: false
-    },
-    {
-        name: "Caregiver Circle",
-        description: "Support for those caring for loved ones",
-        illnessType: "Caregiver Support",
-        memberCount: 64,
-        isPrivate: false
-    },
-    {
-        name: "Breast Cancer Survivors",
-        description: "Connect with breast cancer survivors and thrivers",
-        illnessType: "Cancer Support",
-        memberCount: 156,
-        isPrivate: false
-    },
-    {
-        name: "Diabetes Management",
-        description: "Tips and support for managing diabetes",
-        illnessType: "Chronic Illness",
-        memberCount: 98,
-        isPrivate: false
+        title: "Body Relaxation",
+        description: "Classical piano",
+        type: "meditation",
+        duration: "14:00",
+        category: "General",
+        tags: JSON.stringify(["relaxation", "piano", "calm"])
     }
 ];
 
 const seedDatabase = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI);
-        console.log('MongoDB Connected for seeding');
+        await sequelize.sync({ force: true });
+        console.log('Database synced');
 
-        // Clear existing data
-        await WellnessContent.deleteMany({});
-        await Community.deleteMany({});
-        console.log('Cleared existing data');
-
-        // Insert wellness content
-        const wellness = await WellnessContent.insertMany(wellnessData);
-        console.log(`${wellness.length} wellness items created`);
-
-        // Insert communities
-        const communities = await Community.insertMany(communityData);
-        console.log(`${communities.length} communities created`);
+        await WellnessContent.bulkCreate(wellnessData);
+        console.log(`${wellnessData.length} wellness items created`);
 
         console.log('Database seeded successfully!');
         process.exit(0);

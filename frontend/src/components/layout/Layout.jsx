@@ -17,7 +17,7 @@ export default function Layout() {
             <header className="desktop-nav">
                 <div className="nav-container">
                     <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-                        <img src={logo} alt="Sneha Logo" style={{ height: '120px', objectFit: 'contain' }} />
+                        <img src={logo} alt="Sneha Logo" style={{ height: '60px', objectFit: 'contain' }} />
                     </Link>
 
                     <nav style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
