@@ -1,6 +1,8 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const sequelize = require('./config/db');
 
 dotenv.config();
@@ -8,6 +10,16 @@ dotenv.config();
 const port = process.env.PORT || 5000;
 
 const app = express();
+
+// Security Middleware
+app.use(helmet());
+
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
 
 // CORS configuration for frontend
 app.use(cors({
