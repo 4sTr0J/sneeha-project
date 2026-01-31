@@ -18,5 +18,10 @@ export const chatService = {
             isAI
         });
         return response.data;
+    },
+
+    async clearMessages(conversationId) {
+        const response = await api.delete(`/chat/messages/${conversationId}`);
+        return response.data;
     }
 };
