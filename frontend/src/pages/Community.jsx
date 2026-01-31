@@ -67,9 +67,9 @@ export default function Community() {
                     }}>
                         {groups.map((group) => (
                             <GroupCard
-                                key={group._id}
+                                key={group.id}
                                 group={group}
-                                onJoin={() => handleJoinGroup(group._id)}
+                                onJoin={() => handleJoinGroup(group.id)}
                             />
                         ))}
                     </div>

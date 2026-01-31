@@ -1,4 +1,4 @@
-const { WellnessContent } = require('../models');
+const { WellnessContent, User } = require('../models');
 const sequelize = require('../config/db');
 
 const wellnessData = [
@@ -9,6 +9,7 @@ const wellnessData = [
         type: "music",
         duration: "8:20",
         category: "Relaxation",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
         tags: JSON.stringify(["ambient", "instrumental", "scientific"])
     },
     {
@@ -17,6 +18,7 @@ const wellnessData = [
         type: "music",
         duration: "8:00",
         category: "Relaxation",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
         tags: JSON.stringify(["vocals", "ambient", "enya"])
     },
     {
@@ -25,6 +27,7 @@ const wellnessData = [
         type: "music",
         duration: "10:00",
         category: "Relaxation",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
         tags: JSON.stringify(["chill", "pop", "feel-good"])
     },
     {
@@ -33,6 +36,7 @@ const wellnessData = [
         type: "music",
         duration: "15:00",
         category: "Relaxation",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
         tags: JSON.stringify(["chill-out", "ambient", "electronic"])
     },
     {
@@ -41,6 +45,7 @@ const wellnessData = [
         type: "music",
         duration: "11:00",
         category: "Relaxation",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
         tags: JSON.stringify(["beats", "ambient", "chill-out"])
     },
     {
@@ -49,6 +54,7 @@ const wellnessData = [
         type: "music",
         duration: "5:00",
         category: "Relaxation",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
         tags: JSON.stringify(["classical", "piano", "calm"])
     },
     // Guided Meditation
@@ -58,6 +64,7 @@ const wellnessData = [
         type: "meditation",
         duration: "10:00",
         category: "Beginner",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
         tags: JSON.stringify(["morning", "energy", "beginner"])
     },
     {
@@ -66,6 +73,7 @@ const wellnessData = [
         type: "meditation",
         duration: "8:00",
         category: "Intermediate",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
         tags: JSON.stringify(["body scan", "relaxation", "tension"])
     },
     {
@@ -74,6 +82,7 @@ const wellnessData = [
         type: "meditation",
         duration: "10:00",
         category: "Advanced",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
         tags: JSON.stringify(["stress", "quick", "advanced"])
     },
     {
@@ -82,6 +91,7 @@ const wellnessData = [
         type: "meditation",
         duration: "11:00",
         category: "All Levels",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3",
         tags: JSON.stringify(["breathing", "mindful", "presence"])
     },
     {
@@ -90,6 +100,7 @@ const wellnessData = [
         type: "meditation",
         duration: "14:00",
         category: "Basic",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3",
         tags: JSON.stringify(["healing", "visualization", "wellness"])
     },
     {
@@ -98,6 +109,7 @@ const wellnessData = [
         type: "meditation",
         duration: "14:00",
         category: "General",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3",
         tags: JSON.stringify(["relaxation", "piano", "calm"])
     }
 ];
@@ -109,6 +121,21 @@ const seedDatabase = async () => {
 
         await WellnessContent.bulkCreate(wellnessData);
         console.log(`${wellnessData.length} wellness items created`);
+
+        // Create default user
+        const bcrypt = require('bcryptjs');
+        const hashedPassword = await bcrypt.hash('password123', 10);
+
+        await User.create({
+            name: "Nadil",
+            email: "nadil@example.com",
+            password: hashedPassword,
+            supportType: "Cancer Support",
+            avatar: "",
+            bio: "Here to heal and help.",
+            illnessType: "Survivor"
+        });
+        console.log('Default user created: nadil@example.com / password123');
 
         console.log('Database seeded successfully!');
         process.exit(0);

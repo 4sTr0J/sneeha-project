@@ -116,7 +116,7 @@ export default function Chat() {
                         <div style={{ flex: 1 }}>
                             {messages.map((message, index) => (
                                 <MessageBubble
-                                    key={message._id || index}
+                                    key={message.id || index}
                                     message={message}
                                     isOwn={!message.isAI}
                                 />
