@@ -1,10 +1,43 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { User, Shield, Bell, Volume2, Languages, Save, ChevronRight } from 'lucide-react';
+import { User, Shield, Bell, Volume2, Save, ChevronRight } from 'lucide-react';
 
 export default function Profile() {
-    const { user } = useAuth();
+    const { user, updateProfile } = useAuth();
     const [activeSection, setActiveSection] = useState('profile');
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        supportType: ''
+    });
+    const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                name: user.name || '',
+                email: user.email || '',
+                supportType: user.supportType || ''
+            });
+        }
+    }, [user]);
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            await updateProfile(formData);
+            alert('Profile updated successfully!');
+        } catch (error) {
+            console.error('Failed to update profile:', error);
+            alert('Failed to update profile');
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     return (
         <div className="animate-fade-in">
@@ -55,16 +88,40 @@ export default function Profile() {
                             </div>
 
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-                                <ProfileField label="Full Name" value={user?.name} />
-                                <ProfileField label="Support Type" value={user?.supportType} />
-                                <ProfileField label="Email" value={user?.email} />
-                                <ProfileField label="Joined Date" value="January 2026" />
+                                <ProfileField
+                                    label="Full Name"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                />
+                                <ProfileField
+                                    label="Support Type"
+                                    name="supportType"
+                                    value={formData.supportType}
+                                    onChange={handleChange}
+                                />
+                                <ProfileField
+                                    label="Email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                />
+                                <ProfileField
+                                    label="Joined Date"
+                                    value="January 2026"
+                                    disabled
+                                />
                             </div>
 
                             <div style={{ marginTop: '40px' }}>
-                                <button className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleSave}
+                                    disabled={isSaving}
+                                    style={{ display: 'flex', alignItems: 'center', gap: '10px', opacity: isSaving ? 0.7 : 1 }}
+                                >
                                     <Save size={18} />
-                                    Save Profile Changes
+                                    {isSaving ? 'Saving...' : 'Save Profile Changes'}
                                 </button>
                             </div>
                         </div>
@@ -110,11 +167,17 @@ function SettingsNavButton({ active, onClick, icon, label }) {
     );
 }
 
-function ProfileField({ label, value }) {
+function ProfileField({ label, name, value, onChange, disabled }) {
     return (
         <div>
             <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#9CA3AF', marginBottom: '8px', textTransform: 'uppercase' }}>{label}</label>
-            <input className="input" defaultValue={value} />
+            <input
+                className="input"
+                name={name}
+                value={value}
+                onChange={onChange}
+                disabled={disabled}
+            />
         </div>
     );
 }

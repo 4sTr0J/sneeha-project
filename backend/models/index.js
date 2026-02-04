@@ -5,7 +5,7 @@ const Message = require('./Message');
 const Music = require('./Music');
 
 // User <-> WellnessContent (Favorites) Many-to-Many
-User.belongsToMany(WellnessContent, { through: 'UserFavorites', as: 'favorites' });
+User.belongsToMany(WellnessContent, { through: 'UserFavorites', as: 'Favorites' });
 WellnessContent.belongsToMany(User, { through: 'UserFavorites' });
 
 // User <-> Community (Members) Many-to-Many

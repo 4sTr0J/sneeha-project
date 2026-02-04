@@ -152,14 +152,14 @@ export default function Wellness() {
                     <p style={{ color: '#6B7280', fontSize: '18px' }}>Explore curated content to support your mental and physical healing.</p>
                 </div>
                 <div style={{ display: 'flex', gap: '15px' }}>
-                    <div style={{ position: 'relative' }}>
-                        <Search size={18} style={{ position: 'absolute', left: '15px', top: '15px', color: '#9CA3AF' }} />
+                    <div className="search-input-wrapper" style={{ position: 'relative' }}>
+                        <Search size={18} style={{ position: 'absolute', left: '15px', top: '15px', color: '#9CA3AF', zIndex: 1 }} />
                         <input
                             className="input"
                             placeholder="Search library..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            style={{ width: '300px', paddingLeft: '45px', marginBottom: 0 }}
+                            style={{ width: '350px', paddingLeft: '45px', marginBottom: 0, position: 'relative', zIndex: 0 }}
                         />
                     </div>
                 </div>
@@ -232,7 +232,7 @@ export default function Wellness() {
 }
 
 function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite }) {
-    const displayImage = item.type === 'music' ? natureImage : (item.imageUrl || null);
+    const displayImage = item.imageUrl || (item.type === 'music' ? natureImage : null);
     const isMeditation = item.type === 'meditation';
 
     // Generate a unique gradient based on the title

@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { Brain, Users, Activity, Heart, Search, Calendar, Bell } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { Brain, Users, Activity, Heart, Search, Calendar, Bell, Moon, Sun } from 'lucide-react';
 import doctorMascot from '../assets/doctor_mascot.png';
 
 export default function Dashboard() {
     const { user } = useAuth();
+    const { isDarkMode, toggleTheme } = useTheme();
     const navigate = useNavigate();
 
     return (
@@ -12,15 +14,49 @@ export default function Dashboard() {
             {/* Top Stat Bar */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px', alignItems: 'flex-end' }}>
                 <div>
-                    <h1 style={{ fontSize: '32px', fontWeight: '800', color: 'var(--bg-darker)' }}>
+                    <h1 style={{ fontSize: '32px', fontWeight: '800', color: 'var(--text-main)' }}>
                         How are you feeling, {user?.name?.split(' ')[0]}?
                     </h1>
-                    <p style={{ color: '#6B7280', fontSize: '16px' }}>Let's continue your journey to healing today.</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '16px' }}>Let's continue your journey to healing today.</p>
                 </div>
-                <div style={{ display: 'flex', gap: '15px' }}>
+                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
                     <div style={{ position: 'relative' }}>
                         <Search size={18} style={{ position: 'absolute', left: '15px', top: '12px', color: '#9CA3AF' }} />
                         <input className="input" placeholder="Search resources..." style={{ width: '300px', paddingLeft: '45px', marginBottom: 0 }} />
+                    </div>
+                    <button
+                        onClick={toggleTheme}
+                        style={{
+                            background: 'white',
+                            border: '1px solid #E9D5FF',
+                            borderRadius: '12px',
+                            width: '46px',
+                            height: '46px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            color: 'var(--primary)',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                        }}
+                    >
+                        {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
+                    </button>
+                    <div className="hover-scale" style={{
+                        background: 'white',
+                        width: '46px',
+                        height: '46px',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1px solid #E9D5FF',
+                        color: 'var(--bg-darker)',
+                        position: 'relative',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                    }}>
+                        <Bell size={22} />
+                        <span style={{ position: 'absolute', top: '10px', right: '12px', width: '8px', height: '8px', background: '#EF4444', borderRadius: '50%' }}></span>
                     </div>
                 </div>
             </div>
@@ -125,7 +161,7 @@ function PreferenceCard({ title, icon, desc, color, onClick }) {
                 {icon}
             </div>
             <h4 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '10px' }}>{title}</h4>
-            <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: '1.4' }}>{desc}</p>
+            <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: '1.4' }}>{desc}</p>
         </div>
     );
 }

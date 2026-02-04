@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import Layout from './components/layout/Layout'
@@ -9,24 +10,39 @@ import Profile from './pages/Profile'
 import Wellness from './pages/Wellness'
 import Chat from './pages/Chat'
 import Community from './pages/Community'
+import CommunityDetail from './pages/CommunityDetail'
+import Preloader from './components/ui/Preloader'
 
 function App() {
-    return (
-        <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Layout />}>
-                <Route index element={<Home />} />
-                <Route path="login" element={<Login />} />
-                <Route path="register" element={<Register />} />
+    const [showIntro, setShowIntro] = useState(true);
 
-                {/* Protected Routes */}
-                <Route path="dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                <Route path="wellness" element={<ProtectedRoute><Wellness /></ProtectedRoute>} />
-                <Route path="chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-                <Route path="community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
-            </Route>
-        </Routes>
+    if (showIntro) {
+        return <Preloader onComplete={() => setShowIntro(false)} />;
+    }
+
+    return (
+        <div className="app-fade-in">
+            <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Layout />}>
+                    <Route index element={<Home />} />
+                    <Route path="login" element={<Login />} />
+                    <Route path="register" element={<Register />} />
+
+                    {/* Protected Routes */}
+                    <Route path="dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                    <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                    <Route path="wellness" element={<ProtectedRoute><Wellness /></ProtectedRoute>} />
+                    <Route path="chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+                    <Route path="community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+                    <Route path="community/groups" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+                    <Route path="community/chats" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+                    <Route path="community/calls" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+                    <Route path="community/updates" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+                    <Route path="community/:id/:type" element={<ProtectedRoute><CommunityDetail /></ProtectedRoute>} />
+                </Route>
+            </Routes>
+        </div>
     )
 }
 

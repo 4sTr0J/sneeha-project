@@ -60,11 +60,20 @@ router.post('/register', async (req, res) => {
 // @access  Public
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
+    console.log(`Login attempt for email: ${email}`);
 
     // Check for user email
     const user = await User.findOne({ where: { email } });
 
-    if (user && (await bcrypt.compare(password, user.password))) {
+    if (!user) {
+        console.log(`User not found for email: ${email}`);
+        return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log(`Password match for ${email}: ${isMatch}`);
+
+    if (isMatch) {
         res.json({
             _id: user.id,
             name: user.name,
@@ -81,6 +90,40 @@ router.post('/login', async (req, res) => {
 // @access  Private
 router.get('/me', protect, async (req, res) => {
     res.status(200).json(req.user);
+});
+
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+router.put('/profile', protect, async (req, res) => {
+    try {
+        const user = await User.findByPk(req.user.id);
+
+        if (user) {
+            user.name = req.body.name || user.name;
+            user.email = req.body.email || user.email;
+            user.supportType = req.body.supportType || user.supportType;
+
+            if (req.body.password) {
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(req.body.password, salt);
+            }
+
+            const updatedUser = await user.save();
+
+            res.json({
+                id: updatedUser.id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                supportType: updatedUser.supportType,
+                token: generateToken(updatedUser.id),
+            });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 });
 
 module.exports = router;

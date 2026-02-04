@@ -48,15 +48,25 @@ router.post('/favorite/:id', protect, async (req, res) => {
         const content = await WellnessContent.findByPk(contentId);
 
         if (!content) {
+            console.log('Content not found:', contentId);
             return res.status(404).json({ message: 'Content not found' });
         }
 
+        console.log('User found:', user.id);
+        console.log('Content found:', content.title);
+        // Debug available methods
+        // console.log('User methods:', Object.keys(user.__proto__));
+
+        // Attempting to check favorite status
         const isFavorited = await user.hasFavorite(content);
+        console.log('Is favorited:', isFavorited);
 
         if (isFavorited) {
             await user.removeFavorite(content);
+            console.log('Removed favorite');
         } else {
             await user.addFavorite(content);
+            console.log('Added favorite');
         }
 
         const updatedFavorites = await user.getFavorites();
@@ -66,6 +76,7 @@ router.post('/favorite/:id', protect, async (req, res) => {
             isFavorited: !isFavorited
         });
     } catch (error) {
+        console.error('Favorite toggle error:', error);
         res.status(500).json({ message: error.message });
     }
 });

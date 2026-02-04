@@ -10,6 +10,7 @@ const wellnessData = [
         duration: "8:20",
         category: "Relaxation",
         audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        imageUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=500&h=300&fit=crop", // Misty Lake
         tags: JSON.stringify(["ambient", "instrumental", "scientific"])
     },
     {
@@ -19,6 +20,7 @@ const wellnessData = [
         duration: "8:00",
         category: "Relaxation",
         audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+        imageUrl: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&h=300&fit=crop", // Mountains
         tags: JSON.stringify(["vocals", "ambient", "enya"])
     },
     {
@@ -28,6 +30,7 @@ const wellnessData = [
         duration: "10:00",
         category: "Relaxation",
         audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+        imageUrl: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=500&h=300&fit=crop", // Autumn Forest
         tags: JSON.stringify(["chill", "pop", "feel-good"])
     },
     {
@@ -37,6 +40,7 @@ const wellnessData = [
         duration: "15:00",
         category: "Relaxation",
         audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+        imageUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=300&fit=crop", // Green Forest
         tags: JSON.stringify(["chill-out", "ambient", "electronic"])
     },
     {
@@ -46,6 +50,7 @@ const wellnessData = [
         duration: "11:00",
         category: "Relaxation",
         audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+        imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500&h=300&fit=crop", // Waterfall/Landscape
         tags: JSON.stringify(["beats", "ambient", "chill-out"])
     },
     {
@@ -55,6 +60,7 @@ const wellnessData = [
         duration: "5:00",
         category: "Relaxation",
         audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+        imageUrl: "https://images.unsplash.com/photo-1516339901601-2e1b62dc0f45?w=500&h=300&fit=crop", // Night Sky
         tags: JSON.stringify(["classical", "piano", "calm"])
     },
     // Guided Meditation
@@ -114,6 +120,30 @@ const wellnessData = [
     }
 ];
 
+const communityData = [
+    {
+        name: "Healing Community '25",
+        description: "A space for those beginning their journey in 2025.",
+        illnessType: "Cancer Support",
+        memberCount: 156,
+        isPrivate: false
+    },
+    {
+        name: "Survivors Circle V1.0",
+        description: "Connecting those who have overcome and are thriving.",
+        illnessType: "Survivor",
+        memberCount: 890,
+        isPrivate: false
+    },
+    {
+        name: "Hopeful Horizon",
+        description: "Find peace and hope in shared stories.",
+        illnessType: "Chronic Illness",
+        memberCount: 423,
+        isPrivate: false
+    }
+];
+
 const seedDatabase = async () => {
     try {
         await sequelize.sync({ force: true });
@@ -122,20 +152,24 @@ const seedDatabase = async () => {
         await WellnessContent.bulkCreate(wellnessData);
         console.log(`${wellnessData.length} wellness items created`);
 
+        const { Community } = require('../models');
+        await Community.bulkCreate(communityData);
+        console.log(`${communityData.length} community groups created`);
+
         // Create default user
         const bcrypt = require('bcryptjs');
         const hashedPassword = await bcrypt.hash('password123', 10);
 
         await User.create({
-            name: "Nadil",
-            email: "nadil@example.com",
+            name: "hh",
+            email: "hh@example.com",
             password: hashedPassword,
             supportType: "Cancer Support",
             avatar: "",
             bio: "Here to heal and help.",
             illnessType: "Survivor"
         });
-        console.log('Default user created: nadil@example.com / password123');
+        console.log('Default user created: hh@example.com / password123');
 
         console.log('Database seeded successfully!');
         process.exit(0);
