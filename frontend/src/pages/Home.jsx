@@ -110,9 +110,9 @@ export default function Home() {
                             zIndex: 1
                         }}>
                             <div style={{ textAlign: 'center' }}>
-                                <img src={logo} alt="Sneha Main Logo" style={{ width: '600px', transition: 'transform 0.5s ease' }} className="hover-scale-subtle" />
-                                <div style={{ width: '80px', height: '6px', background: 'var(--accent)', margin: '40px auto 20px', borderRadius: '3px' }}></div>
-                                <p style={{ color: 'var(--primary-light)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '4px', fontSize: '16px' }}>Your Safe Space</p>
+                                <div className="logo-container" style={{ display: 'inline-block' }}>
+                                    <img src={logo} alt="Sneha Main Logo" style={{ width: '600px', transition: 'transform 0.5s ease' }} className="hover-scale-subtle" />
+                                </div>
                             </div>
                         </div>
                     </div>

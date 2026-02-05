@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { User, Mail, Lock, ChevronRight } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 export default function Register() {
     const [formData, setFormData] = useState({
@@ -27,8 +28,10 @@ export default function Register() {
         <div className="auth-page">
             <div className="auth-card" style={{ maxWidth: '600px' }}>
                 <div className="auth-card-header">
-                    <Link to="/" style={{ textDecoration: 'none', color: 'var(--primary)', fontWeight: '800', fontSize: '32px', display: 'block', marginBottom: '10px' }}>
-                        ස්නේහයේ අත්වැල
+                    <Link to="/" style={{ textDecoration: 'none', display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+                        <div className="logo-container">
+                            <img src={logo} alt="Sneha Logo" className="logo-animate" style={{ height: '120px', objectFit: 'contain' }} />
+                        </div>
                     </Link>
                     <h2 style={{ fontSize: '28px', fontWeight: '800', color: 'var(--bg-darker)' }}>Create Your Account</h2>
                     <p style={{ color: '#6B7280', marginTop: '5px' }}>Start your healing journey with our supportive community</p>

@@ -132,9 +132,9 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    <div className="glass-card" style={{ background: 'var(--bg-darker)', color: 'white' }}>
+                    <div className="glass-card" style={{ background: 'white', border: '1px solid #E9D5FF', color: 'var(--text-main)' }}>
                         <h4 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '15px' }}>Daily Reminder</h4>
-                        <p style={{ opacity: 0.8, fontSize: '14px', lineHeight: '1.6' }}>
+                        <p style={{ color: 'var(--text-main)', fontSize: '14px', lineHeight: '1.6', fontStyle: 'italic' }}>
                             "Your illness doesn't define you. Your strength and resilience do. Take a deep breath."
                         </p>
                     </div>
