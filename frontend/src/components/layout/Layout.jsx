@@ -18,7 +18,7 @@ export default function Layout() {
                 <div className="nav-container">
                     <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
                         <div className="logo-container">
-                            <img src={logo} alt="Sneha Logo" className="logo-animate" style={{ height: '100px', objectFit: 'contain' }} />
+                            <img src={logo} alt="Sneha Logo" className="logo-animate" style={{ height: '80px', objectFit: 'contain' }} />
                         </div>
                     </Link>
 
@@ -86,7 +86,7 @@ export default function Layout() {
 
             {/* Sub-Nav moved inside header for alignment */}
 
-            < main className="main-content" style={{ paddingTop: location.pathname.includes('/community') ? '120px' : '120px' }
+            < main className="main-content" style={{ paddingTop: location.pathname.includes('/community') ? '100px' : '100px' }
             }>
                 <Outlet />
             </main >

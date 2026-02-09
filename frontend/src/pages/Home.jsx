@@ -16,7 +16,7 @@ export default function Home() {
         }}>
             {/* Navbar */}
             <nav style={{
-                height: '80px',
+                height: '60px',
                 padding: '0 80px',
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -29,7 +29,7 @@ export default function Home() {
                 borderBottom: '1px solid rgba(255,255,255,0.05)'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <img src={logo} alt="Sneha Logo" style={{ height: '100px', objectFit: 'contain' }} />
+                    <img src={logo} alt="Sneha Logo" style={{ height: '80px', objectFit: 'contain' }} />
                 </div>
                 <div style={{ display: 'flex', gap: '40px', alignItems: 'center' }}>
                     <Link to="/login" style={{ color: 'white', textDecoration: 'none', fontWeight: '700', fontSize: '15px', opacity: 0.8 }} className="hover-opacity">Login</Link>

@@ -167,22 +167,20 @@ export default function Wellness() {
 
             {/* Desktop Filter Bar - Hidden when player is open */}
             {!showPlayer && (
-                <div style={{ display: 'flex', gap: '15px', marginBottom: '40px', overflowX: 'auto', paddingBottom: '10px' }}>
+                <div style={{
+                    display: 'flex',
+                    gap: '15px',
+                    marginBottom: '40px',
+                    marginTop: '30px',
+                    paddingTop: '15px',
+                    overflowX: 'auto',
+                    paddingBottom: '15px'
+                }}>
                     {filters.map((f) => (
                         <button
                             key={f.value}
                             onClick={() => setFilter(f.value)}
-                            style={{
-                                padding: '12px 25px',
-                                borderRadius: '12px',
-                                border: 'none',
-                                background: filter === f.value ? 'var(--primary)' : 'white',
-                                color: filter === f.value ? 'white' : '#6B7280',
-                                fontWeight: '700',
-                                cursor: 'pointer',
-                                whiteSpace: 'nowrap',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
-                            }}
+                            className={`filter-tab ${filter === f.value ? 'active' : ''}`}
                         >
                             {f.label}
                         </button>
@@ -259,10 +257,7 @@ function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite }
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
-                border: 'none',
-                background: 'white',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                 cursor: 'pointer'
             }}
         >

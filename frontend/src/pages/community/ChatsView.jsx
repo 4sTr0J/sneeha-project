@@ -2,11 +2,11 @@ import { Search, MoreVertical, Edit, FileText, UserPlus, Filter } from 'lucide-r
 
 export default function ChatsView() {
     const chats = [
-        { id: 1, name: '+94 76 724 0074 (You)', msg: 'https://www.figma.com/design/Q8MP1hMeh...', time: 'Monday', pin: true, img: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop' },
-        { id: 2, name: 'Faculty OF Computing', msg: 'ANDI: 🎓 Ambassador Calling - Closing Soon Time is ...', time: 'Yesterday', pin: true, img: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop' },
-        { id: 3, name: 'Sticker', msg: 'sticker', time: '3:27 pm', unread: 2, img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop' },
-        { id: 4, name: 'Melfort Estate Sports Club', msg: 'Shan: 😂', time: '3:26 pm', unread: 17, img: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop' },
-        { id: 5, name: 'Nevindu', msg: '✓✓ 6 hrs onl nm krmu 6pm ldn', time: '3:21 pm', img: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop' },
+        { id: 1, name: 'Nuwan Jayasinghe', msg: 'https://www.figma.com/design/Q8MP1hMeh...', time: 'Monday', pin: true, img: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop' },
+        { id: 2, name: 'Tharushi Perera', msg: 'Can we schedule the session for tomorrow?', time: 'Yesterday', pin: true, img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop' },
+        { id: 3, name: 'Dinuka Fernando', msg: 'Thank you for the support!', time: '3:27 pm', unread: 2, img: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop' },
+        { id: 4, name: 'Sanduni Silva', msg: 'I shared the document with you.', time: '3:26 pm', unread: 17, img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop' },
+        { id: 5, name: 'Kavishka Rathnayake', msg: 'I will be there at 6pm.', time: '3:21 pm', img: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop' },
         { id: 6, name: 'Supun Sltc CC', msg: '✓✓ keeytd ynne', time: '3:21 pm', img: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop' },
         { id: 7, name: '+94 77 857 5224', msg: '✓✓ el el...oka dei aniwa', time: '2:53 pm', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop' },
         { id: 8, name: 'Sir Kamesh TM', msg: 'Naa bn', time: '2:42 pm', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop' },
