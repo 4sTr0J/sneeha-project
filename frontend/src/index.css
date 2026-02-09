@@ -263,6 +263,18 @@ body {
         0 0 30px rgba(109, 40, 217, 0.12);
 }
 
+html.dark-mode .welcome-banner-desktop {
+    background: white !important;
+}
+
+html.dark-mode .welcome-banner-desktop h1,
+html.dark-mode .welcome-banner-desktop h2,
+html.dark-mode .welcome-banner-desktop p,
+html.dark-mode .welcome-banner-desktop span,
+html.dark-mode .welcome-banner-desktop div {
+    color: var(--bg-darker) !important;
+}
+
 .pref-grid-desktop {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
