@@ -1,12 +1,18 @@
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { Home, MessageSquare, Heart, Users, LogOut, Phone, Bell } from 'lucide-react';
+import { Home, MessageSquare, Heart, Users, LogOut, Phone, Bell, ChevronLeft, Menu } from 'lucide-react';
+import { useState } from 'react';
+import SlidingPanel from './SlidingPanel';
+import SideNav from './SideNav';
 import logo from '../../assets/logo.png';
 
 export default function Layout() {
     const { user, logout } = useAuth();
     const location = useLocation();
-    const isAuthPage = ['/login', '/register', '/'].includes(location.pathname);
+    const isAuthPage = ['/login', '/register'].includes(location.pathname);
+
+    const [isPanelOpen, setIsPanelOpen] = useState(false);
+    const [isSideNavOpen, setIsSideNavOpen] = useState(false);
 
     if (isAuthPage) {
         return <Outlet />;
@@ -16,11 +22,14 @@ export default function Layout() {
         <div className="app-layout">
             <header className="desktop-nav">
                 <div className="nav-container">
-                    <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-                        <div className="logo-container">
-                            <img src={logo} alt="Sneha Logo" className="logo-animate" style={{ height: '80px', objectFit: 'contain' }} />
-                        </div>
-                    </Link>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+
+                        <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+                            <div className="logo-container">
+                                <img src={logo} alt="Sneha Logo" className="logo-animate" style={{ height: '80px', objectFit: 'contain' }} />
+                            </div>
+                        </Link>
+                    </div>
 
                     <nav style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
                         <NavLink to="/dashboard" icon={<Home size={20} />} label="Dashboard" />
@@ -81,6 +90,40 @@ export default function Layout() {
                 </div >
             </header >
 
+            {!isSideNavOpen && !isPanelOpen && (
+                <button
+                    onClick={() => setIsPanelOpen(!isPanelOpen)}
+                    className="nav-icon-btn"
+                    title="My Day"
+                    style={{
+                        position: 'fixed',
+                        top: '100px',
+                        right: '0',
+                        transform: isPanelOpen ? 'translateX(-380px) rotate(180deg)' : 'translateX(0) rotate(0deg)',
+                        transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                        background: 'var(--primary)',
+                        color: 'white',
+                        borderTopLeftRadius: '50%',
+                        borderBottomLeftRadius: '50%',
+                        borderTopRightRadius: '0',
+                        borderBottomRightRadius: '0',
+                        width: '40px',
+                        height: '50px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '-4px 4px 15px rgba(109, 40, 217, 0.25)',
+                        zIndex: 1003,
+                        paddingLeft: '5px'
+                    }}
+                >
+                    <ChevronLeft size={24} />
+                </button>
+            )}
+
+            <SlidingPanel isOpen={isPanelOpen} onClose={() => setIsPanelOpen(false)} />
+            <SideNav isOpen={isSideNavOpen} onClose={() => setIsSideNavOpen(false)} />
+
             {/* Sub-Nav moved inside header for alignment */}
 
             < main className="main-content" style={{ paddingTop: location.pathname.includes('/community') ? '100px' : '100px' }
@@ -88,6 +131,29 @@ export default function Layout() {
                 <Outlet />
             </main >
         </div >
+    );
+}
+
+function NavIcon({ icon, onClick }) {
+    return (
+        <button
+            onClick={onClick}
+            style={{
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--nav-text-inactive)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '8px',
+                borderRadius: '8px',
+                transition: 'all 0.2s'
+            }}
+            className="nav-icon-hover"
+        >
+            {icon}
+        </button>
     );
 }
 
@@ -121,19 +187,10 @@ function NavLink({ to, icon, label }) {
     const isActive = location.pathname.startsWith(to);
 
     return (
-        <Link to={to} style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            textDecoration: 'none',
-            color: isActive ? 'var(--nav-text-active)' : 'var(--nav-text-inactive)',
-            fontWeight: isActive ? '800' : '600',
-            fontSize: '15px',
-            padding: '8px 16px',
-            borderRadius: '12px',
-            background: isActive ? 'rgba(109, 40, 217, 0.08)' : 'transparent',
-            transition: 'all 0.2s'
-        }}>
+        <Link
+            to={to}
+            className={`nav-link-item ${isActive ? 'active' : ''}`}
+        >
             {icon}
             {label}
         </Link>
