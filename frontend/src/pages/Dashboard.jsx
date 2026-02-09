@@ -12,6 +12,45 @@ export default function Dashboard() {
     const notificationRef = useRef(null);
     const navigate = useNavigate();
 
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+    const coreFeatures = [
+        {
+            title: "Mind Relaxation",
+            icon: <Brain size={35} />,
+            desc: "Guided meditations for stress relief",
+            color: "#8B5CF6",
+            path: '/wellness'
+        },
+        {
+            title: "Community Support",
+            icon: <Users size={35} />,
+            desc: "Join groups with similar journeys",
+            color: "#EC4899",
+            path: '/community'
+        },
+        {
+            title: "Mood Tracker",
+            icon: <Activity size={35} />,
+            desc: "Visualize your emotional progress",
+            color: "#3B82F6",
+            path: '/mood-tracker'
+        },
+        {
+            title: "Healing Music",
+            icon: <Heart size={35} />,
+            desc: "Frequency based sounds for peace",
+            color: "#10B981",
+            path: '/wellness'
+        }
+    ];
+
+    const filteredFeatures = coreFeatures.filter(item =>
+        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.desc.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (notificationRef.current && !notificationRef.current.contains(event.target)) {
@@ -43,7 +82,52 @@ export default function Dashboard() {
                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
                     <div style={{ position: 'relative' }}>
                         <Search size={18} style={{ position: 'absolute', left: '15px', top: '12px', color: '#9CA3AF' }} />
-                        <input className="input" placeholder="Search resources..." style={{ width: '300px', paddingLeft: '45px', marginBottom: 0 }} />
+                        <input
+                            className="input"
+                            placeholder="Search resources..."
+                            style={{ width: '300px', paddingLeft: '45px', marginBottom: 0 }}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onFocus={() => setIsSearchFocused(true)}
+                            onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                        />
+                        {isSearchFocused && searchTerm && (
+                            <div className="glass-card" style={{
+                                position: 'absolute',
+                                top: '55px',
+                                left: 0,
+                                width: '300px',
+                                padding: '10px',
+                                zIndex: 1000,
+                                textAlign: 'left'
+                            }}>
+                                {filteredFeatures.length > 0 ? (
+                                    filteredFeatures.map((item, idx) => (
+                                        <div
+                                            key={idx}
+                                            onClick={() => item.path !== '#' && navigate(item.path)}
+                                            style={{
+                                                padding: '10px',
+                                                borderRadius: '8px',
+                                                cursor: item.path !== '#' ? 'pointer' : 'default',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '10px',
+                                                background: 'transparent',
+                                                transition: 'all 0.2s'
+                                            }}
+                                            onMouseOver={(e) => e.currentTarget.style.background = 'rgba(109, 40, 217, 0.05)'}
+                                            onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                                        >
+                                            <div style={{ color: item.color }}>{item.icon && <item.icon.type size={18} />}</div>
+                                            <span style={{ fontSize: '14px', fontWeight: '700' }}>{item.title}</span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div style={{ padding: '10px', fontSize: '13px', color: 'var(--text-muted)' }}>No matches</div>
+                                )}
+                            </div>
+                        )}
                     </div>
                     <button
                         onClick={toggleTheme}
@@ -95,8 +179,7 @@ export default function Dashboard() {
                                 padding: '15px',
                                 zIndex: 1000,
                                 textAlign: 'left',
-                                cursor: 'default',
-                                animation: 'fade-in 0.2s ease'
+                                cursor: 'default'
                             }} onClick={(e) => e.stopPropagation()}>
                                 <h4 style={{ margin: '0 0 15px', fontSize: '16px', fontWeight: '800', color: 'var(--bg-darker)' }}>Notifications</h4>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -134,45 +217,77 @@ export default function Dashboard() {
                         Explore Wellness
                     </button>
                 </div>
-                <div style={{ position: 'relative' }}>
-                    <div style={{ width: '250px', height: '250px', background: 'rgba(109, 40, 217, 0.05)', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}></div>
-                    <img src={doctorMascot} alt="Supportive AI" style={{ width: '320px', height: '320px', objectFit: 'contain', position: 'relative', zIndex: 1 }} />
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {/* Layered Healthcare Glow (Smoother Transition) */}
+                    <div style={{
+                        width: '350px',
+                        height: '350px',
+                        background: 'radial-gradient(circle, var(--primary) 0%, transparent 70%)',
+                        borderRadius: '50%',
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        filter: 'blur(50px)',
+                        opacity: 0.15,
+                        mixBlendMode: 'screen'
+                    }} />
+                    <div style={{
+                        width: '200px',
+                        height: '200px',
+                        background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)',
+                        borderRadius: '50%',
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        filter: 'blur(30px)',
+                        opacity: 0.1,
+                        mixBlendMode: 'screen'
+                    }} />
+
+                    {/* Smoothly Blended Mascot */}
+                    <img
+                        src={doctorMascot}
+                        alt="Supportive AI"
+                        style={{
+                            width: '320px',
+                            height: '320px',
+                            objectFit: 'contain',
+                            position: 'relative',
+                            zIndex: 1,
+                            filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.1))',
+                            /* Masking bottom and sides for smooth blend */
+                            WebkitMaskImage: 'radial-gradient(circle at center 40%, black 50%, transparent 95%)',
+                            maskImage: 'radial-gradient(circle at center 40%, black 50%, transparent 95%)'
+                        }}
+                    />
                 </div>
             </div>
 
             {/* Content Section */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '40px' }}>
                 <div>
-                    <h3 style={{ fontSize: '22px', fontWeight: '800', marginBottom: '25px', color: 'var(--bg-darker)' }}>Recommended for You</h3>
+                    <h3 style={{ fontSize: '22px', fontWeight: '800', marginBottom: '25px', color: 'var(--bg-darker)' }}>
+                        Recommended for You
+                    </h3>
                     <div className="pref-grid-desktop">
-                        <PreferenceCard
-                            title="Mind Relaxation"
-                            icon={<Brain size={35} />}
-                            desc="Guided meditations for stress relief"
-                            color="#8B5CF6"
-                            onClick={() => navigate('/wellness')}
-                        />
-                        <PreferenceCard
-                            title="Community Support"
-                            icon={<Users size={35} />}
-                            desc="Join groups with similar journeys"
-                            color="#EC4899"
-                            onClick={() => navigate('/community')}
-                        />
-                        <PreferenceCard
-                            title="Mood Tracker"
-                            icon={<Activity size={35} />}
-                            desc="Visualize your emotional progress"
-                            color="#3B82F6"
-                            onClick={() => { }}
-                        />
-                        <PreferenceCard
-                            title="Healing Music"
-                            icon={<Heart size={35} />}
-                            desc="Frequency based sounds for peace"
-                            color="#10B981"
-                            onClick={() => navigate('/wellness')}
-                        />
+                        {filteredFeatures.length > 0 ? (
+                            filteredFeatures.map((item, index) => (
+                                <PreferenceCard
+                                    key={index}
+                                    title={item.title}
+                                    icon={item.icon}
+                                    desc={item.desc}
+                                    color={item.color}
+                                    onClick={() => item.path !== '#' && navigate(item.path)}
+                                />
+                            ))
+                        ) : (
+                            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+                                No results found for "{searchTerm}".
+                            </div>
+                        )}
                     </div>
                 </div>
 
