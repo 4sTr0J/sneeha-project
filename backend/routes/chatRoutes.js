@@ -82,7 +82,7 @@ router.post('/messages', protect, async (req, res) => {
             // Let's await it to be safe, so the frontend spinning state persists until it's done.
 
             try {
-                const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
                 // Context for Sneha
                 const prompt = `You are Sneha, a compassionate and empathetic wellness companion designed to support users with chronic illnesses like cancer. 
