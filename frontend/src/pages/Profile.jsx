@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { User, Shield, Bell, Volume2, Save, ChevronRight } from 'lucide-react';
+import { User, Shield, Bell, Volume2, Save, ChevronRight, LogOut } from 'lucide-react';
 
 export default function Profile() {
-    const { user, updateProfile } = useAuth();
+    const { user, updateProfile, logout } = useAuth();
     const [activeSection, setActiveSection] = useState('profile');
     const [formData, setFormData] = useState({
         name: '',
@@ -70,6 +70,32 @@ export default function Profile() {
                         icon={<Volume2 size={20} />}
                         label="App Preferences"
                     />
+
+                    <div style={{ marginTop: '20px', borderTop: '1px solid #E5E7EB', paddingTop: '20px' }}>
+                        <button
+                            onClick={logout}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '15px',
+                                padding: '16px 20px',
+                                borderRadius: '16px',
+                                border: 'none',
+                                background: 'rgba(239, 68, 68, 0.05)',
+                                color: '#EF4444',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                textAlign: 'left',
+                                width: '100%',
+                                fontSize: '15px',
+                                fontWeight: '700'
+                            }}
+                            className="hover-scale"
+                        >
+                            <LogOut size={20} />
+                            Logout
+                        </button>
+                    </div>
                 </div>
 
                 {/* Content Area */}

@@ -77,9 +77,6 @@ export default function Layout() {
                             </div>
                             <span style={{ fontWeight: '700', fontSize: '15px' }}>{user?.name || 'User'}</span>
                         </Link>
-                        <button onClick={logout} title="Logout" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#EF4444', display: 'flex', alignItems: 'center', transition: 'transform 0.2s' }} className="hover-scale">
-                            <LogOut size={22} />
-                        </button>
                     </div>
                 </div >
             </header >
