@@ -13,6 +13,7 @@ import Community from './pages/Community'
 import CommunityDetail from './pages/CommunityDetail'
 import MoodTracker from './pages/MoodTracker'
 import Preloader from './components/ui/Preloader'
+import Welcome from './pages/Welcome'
 
 function App() {
     const [showIntro, setShowIntro] = useState(true);
@@ -25,8 +26,10 @@ function App() {
         <div className="app-fade-in">
             <Routes>
                 {/* Public Routes */}
-                <Route path="/" element={<Layout />}>
-                    <Route index element={<Home />} />
+                <Route path="/" element={<Welcome />} />
+
+                <Route element={<Layout />}>
+                    <Route path="home" element={<Home />} />
                     <Route path="login" element={<Login />} />
                     <Route path="register" element={<Register />} />
 

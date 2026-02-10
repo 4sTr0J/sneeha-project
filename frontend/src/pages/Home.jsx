@@ -14,37 +14,6 @@ export default function Home() {
             flexDirection: 'column',
             overflowX: 'hidden'
         }}>
-            {/* Navbar */}
-            <nav style={{
-                height: '60px',
-                padding: '0 80px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                background: 'rgba(26, 11, 46, 0.8)',
-                backdropFilter: 'blur(10px)',
-                position: 'sticky',
-                top: 0,
-                zIndex: 1000,
-                borderBottom: '1px solid rgba(255,255,255,0.05)'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <img src={logo} alt="Sneha Logo" style={{ height: '80px', objectFit: 'contain' }} />
-                </div>
-                <div style={{ display: 'flex', gap: '40px', alignItems: 'center' }}>
-                    <Link to="/login" style={{ color: 'white', textDecoration: 'none', fontWeight: '700', fontSize: '15px', opacity: 0.8 }} className="hover-opacity">Login</Link>
-                    <Link to="/register" style={{
-                        background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
-                        padding: '12px 30px',
-                        borderRadius: '15px',
-                        color: 'white',
-                        textDecoration: 'none',
-                        fontWeight: '800',
-                        fontSize: '15px',
-                        boxShadow: '0 10px 20px rgba(109, 40, 217, 0.3)'
-                    }} className="hover-up">Join Community</Link>
-                </div>
-            </nav>
 
             {/* Hero Section */}
             <main style={{

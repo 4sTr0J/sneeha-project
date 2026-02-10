@@ -112,21 +112,11 @@ const Preloader = ({ onComplete }) => {
         };
 
         const startSequence = () => {
-            // Updated for a balanced 3-second sequence
-            setTimeout(() => {
-                phase = 'DISPERSE';
-                particles.forEach(p => {
-                    p.vx = (Math.random() - 0.5) * 50;
-                    p.vy = (Math.random() - 0.5) * 50;
-                });
-            }, 1000);
-
-            setTimeout(() => phase = 'CONVERGE', 2000);
-
+            // 3 seconds of focused heartbeat before loading the site
             setTimeout(() => {
                 if (containerRef.current) {
                     containerRef.current.style.opacity = '0';
-                    setTimeout(onComplete, 500);
+                    setTimeout(onComplete, 1000); // Graceful fade out
                 }
             }, 3000);
         };
@@ -148,7 +138,7 @@ const Preloader = ({ onComplete }) => {
             ctx.fillStyle = '#1A0B2E';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            const hScale = phase === 'HEART_BEEP' ? 1 + Math.sin(time * 5) * 0.12 : 1;
+            const hScale = phase === 'HEART_BEEP' ? 1 + Math.sin(time * 2) * 0.08 : 1;
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
 

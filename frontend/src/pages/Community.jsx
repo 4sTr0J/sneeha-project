@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 import GroupsView from './community/GroupsView';
 import ChatsView from './community/ChatsView';
 import CallsView from './community/CallsView';
+import UpdatesView from './community/UpdatesView';
 
 export default function Community() {
     const location = useLocation();
@@ -10,12 +11,6 @@ export default function Community() {
     const isGroups = location.pathname.includes('/community/groups');
     const isCalls = location.pathname.includes('/community/calls');
     const isUpdates = location.pathname.includes('/community/updates');
-
-    // Default to ChatsView if no specific sub-route or just /community (which maps to Chats in this design)
-    // Actually, per Layout.jsx:
-    // /community -> Chats
-    // /community/groups -> Groups
-    // /community/calls -> Calls
 
     if (isGroups) {
         return <GroupsView />;
@@ -26,12 +21,7 @@ export default function Community() {
     }
 
     if (isUpdates) {
-        return (
-            <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                <h2>Updates</h2>
-                <p>No new updates Available.</p>
-            </div>
-        );
+        return <UpdatesView />;
     }
 
     // Default view (Chats)

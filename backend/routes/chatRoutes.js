@@ -6,6 +6,7 @@ const { Op } = require('sequelize');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // Initialize Gemini
+console.log("Initializing Gemini with API Key:", process.env.GEMINI_API_KEY ? "Key Present" : "Key Missing");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // @desc    Get user conversations
@@ -81,9 +82,26 @@ router.post('/messages', protect, async (req, res) => {
             // However, the frontend reloads after 1.5s. If Gemini takes 3s, the reload misses it.
             // Let's await it to be safe, so the frontend spinning state persists until it's done.
 
-            try {
-                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            // Helper function to generate content with fallback
+            async function generateWithFallback(promptText) {
+                const modelsToTry = ["gemini-1.5-flash", "gemini-pro"];
 
+                for (const modelName of modelsToTry) {
+                    try {
+                        console.log(`Attempting to generate with model: ${modelName}`);
+                        const model = genAI.getGenerativeModel({ model: modelName });
+                        const result = await model.generateContent(promptText);
+                        const response = await result.response;
+                        return response.text();
+                    } catch (error) {
+                        console.warn(`Failed with model ${modelName}:`, error.message);
+                        // Continue to next model if available
+                        if (modelName === modelsToTry[modelsToTry.length - 1]) throw error;
+                    }
+                }
+            }
+
+            try {
                 // Context for Sneha
                 const prompt = `You are Sneha, a compassionate and empathetic wellness companion designed to support users with chronic illnesses like cancer. 
                 Your tone is warm, gentle, and encouraging. You provide emotional support, mindfulness tips, and a listening ear. 
@@ -91,20 +109,21 @@ router.post('/messages', protect, async (req, res) => {
                 
                 User: ${content}`;
 
-                const result = await model.generateContent(prompt);
-                const response = await result.response;
-                const text = response.text();
+                const text = await generateWithFallback(prompt);
 
                 // 3. Save AI Response
                 await Message.create({
-                    sender: req.user.id, // Using user ID as sender for now, distinguishing via isAI flag
+                    sender: req.user.id,
                     conversationId,
                     content: text,
                     isAI: true
                 });
 
             } catch (aiError) {
-                console.error("Gemini API Error:", aiError);
+                // LOG THE ACTUAL ERROR TO THE SERVER CONSOLE
+                console.error("Gemini API All Models Failed:", aiError);
+                console.error("Gemini API Key Status:", process.env.GEMINI_API_KEY ? "Present" : "Missing");
+
                 // Fallback message
                 await Message.create({
                     sender: req.user.id,

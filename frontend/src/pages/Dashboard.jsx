@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../context/ThemeContext';
-import { Brain, Users, Activity, Heart, Search, Calendar, Bell, Moon, Sun } from 'lucide-react';
+import { Brain, Users, Activity, Heart, Search, Calendar, Bell, Moon, Sun, Sparkles } from 'lucide-react';
 import doctorMascot from '../assets/doctor_mascot_new.png';
 
 export default function Dashboard() {
@@ -266,12 +266,13 @@ export default function Dashboard() {
             </div>
 
             {/* Content Section */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '40px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '40px' }}>
                 <div>
                     <h3 style={{ fontSize: '22px', fontWeight: '800', marginBottom: '25px', color: 'var(--bg-darker)' }}>
                         Recommended for You
                     </h3>
                     <div className="pref-grid-desktop">
+<<<<<<< HEAD
                         {filteredFeatures.length > 0 ? (
                             filteredFeatures.map((item, index) => (
                                 <PreferenceCard
@@ -288,27 +289,36 @@ export default function Dashboard() {
                                 No results found for "{searchTerm}".
                             </div>
                         )}
-                    </div>
-                </div>
-
-                {/* Sidebar Widget (Desktop Only) */}
-                <div>
-                    <div className="glass-card" style={{ marginBottom: '30px' }}>
-                        <h4 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <Calendar size={20} color="var(--primary)" />
-                            Upcoming Events
-                        </h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                            <EventItem time="4:00 PM" label="Meditation Session" />
-                            <EventItem time="Tomorrow" label="Cancer Survivor Meet" />
-                        </div>
-                    </div>
-
-                    <div className="glass-card" style={{ background: 'white', border: '1px solid #E9D5FF', color: 'var(--text-main)' }}>
-                        <h4 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '15px' }}>Daily Reminder</h4>
-                        <p style={{ color: 'var(--text-main)', fontSize: '14px', lineHeight: '1.6', fontStyle: 'italic' }}>
-                            "Your illness doesn't define you. Your strength and resilience do. Take a deep breath."
-                        </p>
+=======
+                        <PreferenceCard
+                            title="Mind Relaxation"
+                            icon={<Brain size={35} />}
+                            desc="Guided meditations for stress relief"
+                            color="#8B5CF6"
+                            onClick={() => navigate('/wellness')}
+                        />
+                        <PreferenceCard
+                            title="Community Support"
+                            icon={<Users size={35} />}
+                            desc="Join groups with similar journeys"
+                            color="#EC4899"
+                            onClick={() => navigate('/community')}
+                        />
+                        <PreferenceCard
+                            title="AI Support Agent"
+                            icon={<Sparkles size={35} />}
+                            desc="24/7 Emotional support companion"
+                            color="#3B82F6"
+                            onClick={() => navigate('/chat')}
+                        />
+                        <PreferenceCard
+                            title="Healing Music"
+                            icon={<Heart size={35} />}
+                            desc="Frequency based sounds for peace"
+                            color="#10B981"
+                            onClick={() => navigate('/wellness')}
+                        />
+>>>>>>> 7ececae56d5398a033dd0ed408ab370250202797
                     </div>
                 </div>
             </div>
