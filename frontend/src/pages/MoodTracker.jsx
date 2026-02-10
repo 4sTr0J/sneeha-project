@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { moodService } from '../services/moodService';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Heart,
@@ -28,25 +29,43 @@ export default function MoodTracker() {
     const navigate = useNavigate();
     const [selectedMood, setSelectedMood] = useState(null);
     const [note, setNote] = useState('');
-    const [moodHistory, setMoodHistory] = useState([
-        { id: 1, mood: 'happy', note: 'Feeling great after group session!', time: '10:30 AM', date: 'Today' },
-        { id: 2, mood: 'calm', note: 'Meditation helped a lot.', time: 'Yesterday', date: 'Feb 8' }
-    ]);
+    const [moodHistory, setMoodHistory] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const handleSaveMood = () => {
+    useEffect(() => {
+        fetchMoodHistory();
+    }, []);
+
+    const fetchMoodHistory = async () => {
+        try {
+            const data = await moodService.getMoodHistory();
+            setMoodHistory(data);
+        } catch (error) {
+            console.error('Failed to fetch mood history:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSaveMood = async () => {
         if (!selectedMood) return;
 
-        const newEntry = {
-            id: Date.now(),
+        const entryData = {
             mood: selectedMood.id,
             note: note,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             date: 'Today'
         };
 
-        setMoodHistory([newEntry, ...moodHistory]);
-        setSelectedMood(null);
-        setNote('');
+        try {
+            const savedEntry = await moodService.saveMoodEntry(entryData);
+            setMoodHistory([savedEntry, ...moodHistory]);
+            setSelectedMood(null);
+            setNote('');
+        } catch (error) {
+            console.error('Failed to save mood entry:', error);
+            alert('Failed to save mood entry. Please try again.');
+        }
     };
 
     return (
