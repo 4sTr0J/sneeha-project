@@ -16,7 +16,7 @@ const WellnessContent = sequelize.define('WellnessContent', {
         allowNull: false
     },
     type: {
-        type: DataTypes.ENUM('meditation', 'music', 'breathing', 'affirmation'),
+        type: DataTypes.ENUM('meditation', 'music', 'breathing', 'affirmation', 'video'),
         allowNull: false
     },
     duration: {

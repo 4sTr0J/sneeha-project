@@ -60,10 +60,10 @@ export default function Layout() {
                                 border: '1px solid #E9D5FF',
                                 minWidth: 'max-content'
                             }}>
-                                <SubNavLink to="/community/groups" label="Communities" icon={<Users size={14} />} />
-                                <SubNavLink to="/community" label="Chats" icon={<MessageSquare size={14} />} exact={true} />
-                                <SubNavLink to="/community/calls" label="Calls" icon={<Phone size={14} />} />
-                                <SubNavLink to="/community/updates" label="Updates" icon={<Bell size={14} />} />
+                                <SubNavLink to="/community/groups" label="Communities" icon={<Users size={18} />} />
+                                <SubNavLink to="/community" label="Chats" icon={<MessageSquare size={18} />} exact={true} />
+                                <SubNavLink to="/community/calls" label="Calls" icon={<Phone size={18} />} />
+                                <SubNavLink to="/community/updates" label="Updates" icon={<Bell size={18} />} />
                             </div>
                         </>
                     )}
@@ -126,7 +126,7 @@ export default function Layout() {
 
             {/* Sub-Nav moved inside header for alignment */}
 
-            < main className="main-content" style={{ paddingTop: location.pathname.includes('/community') ? '100px' : '100px' }
+            < main className="main-content" style={{ paddingTop: location.pathname.includes('/community') ? '160px' : '100px' }
             }>
                 <Outlet />
             </main >
@@ -165,12 +165,12 @@ function SubNavLink({ to, label, icon, exact }) {
         <Link to={to} style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
-            padding: '8px 20px',
+            gap: '10px',
+            padding: '12px 28px',
             borderRadius: '40px',
             textDecoration: 'none',
-            fontSize: '14px',
-            fontWeight: '600',
+            fontSize: '16px',
+            fontWeight: '700',
             color: isActive ? 'var(--nav-text-active)' : 'var(--nav-text-inactive)',
             background: isActive ? 'rgba(109, 40, 217, 0.08)' : 'transparent',
             transition: 'all 0.2s ease',

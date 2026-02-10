@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../context/ThemeContext';
-import { Brain, Users, Activity, Heart, Search, Calendar, Bell, Moon, Sun } from 'lucide-react';
+import { Brain, Users, Activity, Heart, Search, Calendar, Bell, Moon, Sun, Sparkles } from 'lucide-react';
 import doctorMascot from '../assets/doctor_mascot_new.png';
 
 export default function Dashboard() {
@@ -160,11 +160,11 @@ export default function Dashboard() {
                             onClick={() => navigate('/community')}
                         />
                         <PreferenceCard
-                            title="Mood Tracker"
-                            icon={<Activity size={35} />}
-                            desc="Visualize your emotional progress"
+                            title="AI Support Agent"
+                            icon={<Sparkles size={35} />}
+                            desc="24/7 Emotional support companion"
                             color="#3B82F6"
-                            onClick={() => { }}
+                            onClick={() => navigate('/chat')}
                         />
                         <PreferenceCard
                             title="Healing Music"

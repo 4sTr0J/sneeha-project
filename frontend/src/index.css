@@ -297,7 +297,7 @@ html.dark-mode .welcome-banner-desktop div {
 }
 
 .filter-tab {
-    padding: 12px 25px;
+    padding: 16px 30px;
     border-radius: 12px;
     border: 1px solid rgba(109, 40, 217, 0.1);
     background: white;
@@ -737,6 +737,16 @@ html.dark-mode .daily-reminder-card-panel p {
 html.dark-mode .panel-event-item {
     background: rgba(255, 255, 255, 0.03);
     border-color: #2D2D42;
+}
+
+/* Scrollbar Utilities */
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
 }
 
 /* Navigation Link Styles */

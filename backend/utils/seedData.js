@@ -10,7 +10,7 @@ const wellnessData = [
         duration: "8:20",
         category: "Relaxation",
         audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-        imageUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=500&h=300&fit=crop", // Misty Lake
+        imageUrl: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=500&h=300&fit=crop",
         tags: JSON.stringify(["ambient", "instrumental", "scientific"])
     },
     {
@@ -20,7 +20,7 @@ const wellnessData = [
         duration: "8:00",
         category: "Relaxation",
         audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-        imageUrl: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&h=300&fit=crop", // Mountains
+        imageUrl: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&h=300&fit=crop",
         tags: JSON.stringify(["vocals", "ambient", "enya"])
     },
     {
@@ -30,38 +30,8 @@ const wellnessData = [
         duration: "10:00",
         category: "Relaxation",
         audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-        imageUrl: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=500&h=300&fit=crop", // Autumn Forest
+        imageUrl: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=500&h=300&fit=crop",
         tags: JSON.stringify(["chill", "pop", "feel-good"])
-    },
-    {
-        title: "Electra - Air stream",
-        description: "Chill-out, ambient electronic",
-        type: "music",
-        duration: "15:00",
-        category: "Relaxation",
-        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
-        imageUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=300&fit=crop", // Green Forest
-        tags: JSON.stringify(["chill-out", "ambient", "electronic"])
-    },
-    {
-        title: "Mellomaniac",
-        description: "Chill-out, ambient beats",
-        type: "music",
-        duration: "11:00",
-        category: "Relaxation",
-        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
-        imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500&h=300&fit=crop", // Waterfall/Landscape
-        tags: JSON.stringify(["beats", "ambient", "chill-out"])
-    },
-    {
-        title: "Clair de lune",
-        description: "Classical piano",
-        type: "music",
-        duration: "5:00",
-        category: "Relaxation",
-        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
-        imageUrl: "https://images.unsplash.com/photo-1516339901601-2e1b62dc0f45?w=500&h=300&fit=crop", // Night Sky
-        tags: JSON.stringify(["classical", "piano", "calm"])
     },
     // Guided Meditation
     {
@@ -71,25 +41,8 @@ const wellnessData = [
         duration: "10:00",
         category: "Beginner",
         audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+        imageUrl: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80",
         tags: JSON.stringify(["morning", "energy", "beginner"])
-    },
-    {
-        title: "Body Scan Relaxation",
-        description: "Release tension from head to toe",
-        type: "meditation",
-        duration: "8:00",
-        category: "Intermediate",
-        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
-        tags: JSON.stringify(["body scan", "relaxation", "tension"])
-    },
-    {
-        title: "Stress Relief",
-        description: "Quick relaxation for busy days",
-        type: "meditation",
-        duration: "10:00",
-        category: "Advanced",
-        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
-        tags: JSON.stringify(["stress", "quick", "advanced"])
     },
     {
         title: "Mindful Breathing",
@@ -98,25 +51,39 @@ const wellnessData = [
         duration: "11:00",
         category: "All Levels",
         audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3",
+        imageUrl: "https://images.unsplash.com/photo-1499729132352-4a341c0e3932?w=800&q=80",
         tags: JSON.stringify(["breathing", "mindful", "presence"])
     },
     {
-        title: "Healing Visualization",
-        description: "Visualize healing & wellness",
-        type: "meditation",
-        duration: "14:00",
-        category: "Basic",
-        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3",
-        tags: JSON.stringify(["healing", "visualization", "wellness"])
-    },
-    {
         title: "Body Relaxation",
-        description: "Classical piano",
+        description: "Unwind your body and mind in nature",
         type: "meditation",
         duration: "14:00",
         category: "General",
         audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3",
-        tags: JSON.stringify(["relaxation", "piano", "calm"])
+        imageUrl: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&q=80",
+        tags: JSON.stringify(["relaxation", "calm", "nature"])
+    },
+    {
+        title: "Daily Affirmations",
+        description: "Positive self-talk for a better day",
+        type: "affirmation",
+        duration: "5:00",
+        category: "Positive Thinking",
+        audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+        imageUrl: "https://images.unsplash.com/photo-1502139214073-47f67554332c?w=800&q=80",
+        tags: JSON.stringify(["affirmation", "positive", "daily"])
+    },
+    // NEW: Guided Meditation Video
+    {
+        title: "Guided Meditation Video",
+        description: "A complete visual meditation for peace and clarity",
+        type: "video",
+        duration: "15:00",
+        category: "Guided Video",
+        audioUrl: "https://www.youtube.com/embed/uTN29kj7e-w",
+        imageUrl: "https://img.youtube.com/vi/uTN29kj7e-w/maxresdefault.jpg",
+        tags: JSON.stringify(["video", "guided", "peace", "youtube"])
     }
 ];
 

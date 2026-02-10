@@ -74,15 +74,14 @@ export default function MusicPlayerOverlay({
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'flex-start',
+                    justifyContent: 'space-between',
                     position: 'relative',
-                    zIndex: 1
+                    zIndex: 1,
+                    paddingBottom: '40px'
                 }}
             >
-
-
                 {/* Header */}
-                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', position: 'relative', zIndex: 10, padding: '20px' }}>
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 10, padding: '20px' }}>
                     <button
                         onClick={onClose}
                         style={{
@@ -97,8 +96,6 @@ export default function MusicPlayerOverlay({
                             justifyContent: 'center',
                             transition: 'transform 0.2s ease'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(2px)'}
-                        onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                     >
                         <ChevronLeft size={32} strokeWidth={2.5} />
                     </button>
@@ -133,46 +130,55 @@ export default function MusicPlayerOverlay({
                     </button>
                 </div>
 
-                {/* Album Art Container */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: '40px', width: '100%', maxWidth: '380px', margin: '0 auto' }}>
+                {/* Album Art Container - Even more flexible to protect controls */}
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    maxWidth: '380px',
+                    margin: '0 auto',
+                    flex: '1',
+                    minHeight: '200px',
+                    maxHeight: '40vh'
+                }}>
                     <div
                         className="album-art-desktop"
                         style={{
-                            width: '100%',
-                            maxWidth: '420px',
+                            width: '80%',
+                            maxWidth: '280px',
                             aspectRatio: '1/1',
                             borderRadius: '30px',
                             boxShadow: '0 20px 50px -10px rgba(0,0,0,0.8)',
                             overflow: 'hidden',
-                            marginBottom: '39px',
+                            marginBottom: '15px',
                             background: `url(${natureBg})`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             border: '1px solid rgba(255,255,255,0.15)',
-                            position: 'relative',
-                            transition: 'transform 0.5s ease'
+                            position: 'relative'
                         }}
                     >
-                        {/* Visual filter for depth */}
                         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3))' }} />
                     </div>
 
-                    <div style={{ textAlign: 'center', width: '100%', padding: '0 8px', marginBottom: '4px' }}>
-                        <h2 style={{ fontSize: '22px', fontWeight: '900', marginBottom: '2px', lineHeight: 1.1, letterSpacing: '-0.02em', color: 'white' }}>{track.title}</h2>
-                        <p style={{ fontSize: '13px', opacity: 0.6, fontWeight: '500', lineHeight: 1.3, maxWidth: '280px', margin: '0 auto', color: 'white' }}>
+                    <div style={{ textAlign: 'center', width: '100%', padding: '0 8px' }}>
+                        <h2 style={{ fontSize: '18px', fontWeight: '900', marginBottom: '2px', color: 'white' }}>{track.title}</h2>
+                        <p style={{ fontSize: '12px', opacity: 0.6, fontWeight: '500', maxWidth: '280px', margin: '0 auto', color: 'white', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                             {track.description}
                         </p>
                     </div>
                 </div>
 
-                {/* Controls Section */}
-                <div style={{ width: '100%', marginBottom: '0', paddingTop: '20px', paddingBottom: '20px' }}>
+                {/* Controls Section - docked to bottom with more breathing room */}
+                <div style={{ width: '100%', paddingBottom: '30px' }}>
                     {/* Progress Bar */}
-                    <div style={{ marginBottom: '15px', padding: '0 20px', maxWidth: '800px', margin: '0 auto 15px' }}>
+                    <div style={{ marginBottom: '20px', padding: '0 20px', maxWidth: '800px', margin: '0 auto' }}>
                         <div
                             style={{
                                 position: 'relative',
-                                height: '6px',
+                                height: '4px',
                                 width: '100%',
                                 background: 'rgba(255,255,255,0.1)',
                                 borderRadius: '10px',
@@ -197,32 +203,29 @@ export default function MusicPlayerOverlay({
                                 }}
                             ></div>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', fontSize: '11px', fontWeight: 'bold', letterSpacing: '0.05em', opacity: 0.6 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontSize: '11px', fontWeight: '800', opacity: 0.5 }}>
                             <span>{formatTime(currentTime)}</span>
                             <span>-{formatTime(remainingTime)}</span>
                         </div>
                     </div>
 
-                    {/* Main Playback Bar - Accurate to reference */}
+                    {/* Main Playback Bar */}
                     <div style={{ padding: '0 20px', maxWidth: '800px', margin: '0 auto' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-
-                            {/* Repeat */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '25px' }}>
                             <button style={{ background: 'none', border: 'none', color: 'white', opacity: 0.4, cursor: 'pointer' }}>
-                                <Repeat size={18} strokeWidth={2.5} />
+                                <Repeat size={20} />
                             </button>
 
-                            {/* Playback Controls */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
                                 <button style={{ background: 'none', border: 'none', color: 'white', opacity: 0.8, cursor: 'pointer' }}>
-                                    <SkipBack size={24} fill="white" strokeWidth={1} />
+                                    <SkipBack size={28} fill="white" />
                                 </button>
 
                                 <button
                                     onClick={onTogglePlay}
                                     style={{
-                                        width: '60px',
-                                        height: '60px',
+                                        width: '64px',
+                                        height: '64px',
                                         background: 'white',
                                         borderRadius: '50%',
                                         display: 'flex',
@@ -230,19 +233,18 @@ export default function MusicPlayerOverlay({
                                         justifyContent: 'center',
                                         color: '#0F2847',
                                         border: 'none',
-                                        boxShadow: '0 15px 30px rgba(255,255,255,0.1)',
+                                        boxShadow: '0 10px 25px rgba(255,255,255,0.15)',
                                         cursor: 'pointer'
                                     }}
                                 >
-                                    {isPlaying ? <Pause size={30} fill="currentColor" /> : <Play size={30} fill="currentColor" style={{ marginLeft: '4px' }} />}
+                                    {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" style={{ marginLeft: '4px' }} />}
                                 </button>
 
                                 <button style={{ background: 'none', border: 'none', color: 'white', opacity: 0.8, cursor: 'pointer' }}>
-                                    <SkipForward size={24} fill="white" strokeWidth={1} />
+                                    <SkipForward size={28} fill="white" />
                                 </button>
                             </div>
 
-                            {/* Favorite */}
                             <button
                                 onClick={onFavorite}
                                 style={{
@@ -253,27 +255,23 @@ export default function MusicPlayerOverlay({
                                     cursor: 'pointer'
                                 }}
                             >
-                                <Heart size={22} fill={isFavorite ? 'currentColor' : 'none'} strokeWidth={2.5} />
+                                <Heart size={24} fill={isFavorite ? 'currentColor' : 'none'} strokeWidth={2.5} />
                             </button>
                         </div>
 
-                        {/* Bottom Utility Bar */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 24px 0' }}>
-                            <button style={{ background: 'none', border: 'none', color: 'white', opacity: 0.4, cursor: 'pointer' }}>
-                                <Volume2 size={20} strokeWidth={2.5} />
-                            </button>
-                            <button style={{ background: 'none', border: 'none', color: 'white', opacity: 0.4, cursor: 'pointer' }}>
-                                <ListMusic size={20} strokeWidth={2.5} />
-                            </button>
-                            <button style={{ background: 'none', border: 'none', color: 'white', opacity: 0.4, cursor: 'pointer' }}>
-                                <Shuffle size={20} strokeWidth={2.5} />
-                            </button>
-                            <button style={{ background: 'none', border: 'none', color: 'white', opacity: 0.4, cursor: 'pointer' }}>
-                                <Share2 size={20} strokeWidth={2.5} />
-                            </button>
-                            <button style={{ background: 'none', border: 'none', color: 'white', opacity: 0.4, cursor: 'pointer' }}>
-                                <MoreVertical size={20} strokeWidth={2.5} />
-                            </button>
+                        {/* Bottom Utility Bar - Ensured visibility */}
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '0 20px',
+                            opacity: 0.6
+                        }}>
+                            <Volume2 size={20} style={{ cursor: 'pointer' }} />
+                            <ListMusic size={20} style={{ cursor: 'pointer' }} />
+                            <Shuffle size={20} style={{ cursor: 'pointer' }} />
+                            <Share2 size={20} style={{ cursor: 'pointer' }} />
+                            <MoreVertical size={20} style={{ cursor: 'pointer' }} />
                         </div>
                     </div>
                 </div>
