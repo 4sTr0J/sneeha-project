@@ -45,6 +45,7 @@ app.use('/api/wellness', require('./routes/wellnessRoutes'));
 app.use('/api/community', require('./routes/communityRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
 app.use('/api/music', require('./routes/musicRoutes'));
+app.use('/api/moods', require('./routes/moodRoutes'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

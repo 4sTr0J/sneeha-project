@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Heart, Clock, Search } from 'lucide-react';
+import { Play, Pause, Heart, Search, Video } from 'lucide-react';
 import { wellnessService } from '../services/wellnessService';
 import MusicPlayerOverlay from '../components/wellness/MusicPlayerOverlay';
+import VideoPlayerOverlay from '../components/wellness/VideoPlayerOverlay';
 import natureImage from '../assets/nature_meditation.png';
+
+const ASSET_MAP = {};
 
 export default function Wellness() {
     const [content, setContent] = useState([]);
@@ -13,9 +16,14 @@ export default function Wellness() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [favorites, setFavorites] = useState([]);
     const [showPlayer, setShowPlayer] = useState(false);
+    const [showVideoPlayer, setShowVideoPlayer] = useState(false);
     const [audioProgress, setAudioProgress] = useState(0);
     const [duration, setDuration] = useState(0);
     const audioRef = useRef(new Audio());
+
+    const isVideo = (item) => {
+        return item.type === 'video' || (item.audioUrl && (item.audioUrl.includes('youtube.com') || item.audioUrl.includes('youtu.be')));
+    };
 
     useEffect(() => {
         loadContent();
@@ -40,7 +48,6 @@ export default function Wellness() {
         audio.addEventListener('loadedmetadata', handleLoadedMetadata);
         audio.addEventListener('ended', handleEnded);
 
-        // Cleanup on unmount
         return () => {
             audio.removeEventListener('timeupdate', handleTimeUpdate);
             audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
@@ -48,13 +55,12 @@ export default function Wellness() {
             if (audioRef.current) {
                 audioRef.current.pause();
                 audioRef.current.src = "";
-                audioRef.current.load(); // Force release resources
+                audioRef.current.load();
             }
         };
-    }, []); // Run only once to setup cleanup, but mainly loadContent handles data
+    }, []);
 
     useEffect(() => {
-        // Reload content when filter changes
         loadContent();
     }, [filter]);
 
@@ -62,7 +68,7 @@ export default function Wellness() {
         try {
             const filterType = filter === 'all' ? null : filter;
             const data = await wellnessService.getWellnessContent(filterType);
-            setContent(data);
+            setContent(data || []);
             const favs = await wellnessService.getFavorites();
             setFavorites(favs.map(f => f.id));
         } catch (error) {
@@ -73,8 +79,17 @@ export default function Wellness() {
     };
 
     const handleOpenPlayer = (item) => {
+        if (isVideo(item)) {
+            setCurrentTrack(item);
+            setShowVideoPlayer(true);
+            if (isPlaying) {
+                audioRef.current.pause();
+                setIsPlaying(false);
+            }
+            return;
+        }
+
         if (currentTrack?.id !== item.id) {
-            // If it's a new track, load but don't play
             audioRef.current.pause();
             audioRef.current.src = item.audioUrl;
             setCurrentTrack(item);
@@ -85,10 +100,14 @@ export default function Wellness() {
     };
 
     const handlePlay = (item, e) => {
-        if (e) e.stopPropagation(); // Prevent card click trigger
+        if (e) e.stopPropagation();
+
+        if (isVideo(item)) {
+            handleOpenPlayer(item);
+            return;
+        }
 
         if (currentTrack?.id === item.id) {
-            // Toggle play/pause for same track
             if (isPlaying) {
                 audioRef.current.pause();
                 setIsPlaying(false);
@@ -98,7 +117,6 @@ export default function Wellness() {
             }
             setShowPlayer(true);
         } else {
-            // Play new track immediately
             if (item.audioUrl) {
                 audioRef.current.pause();
                 audioRef.current.src = item.audioUrl;
@@ -106,8 +124,6 @@ export default function Wellness() {
                 setCurrentTrack(item);
                 setIsPlaying(true);
                 setShowPlayer(true);
-            } else {
-                console.warn("No audio URL for this item");
             }
         }
     };
@@ -139,10 +155,10 @@ export default function Wellness() {
         { value: 'affirmation', label: 'Daily Affirmations' }
     ];
 
-    const filteredContent = content.filter(item =>
+    const filteredContent = Array.isArray(content) ? content.filter(item =>
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    ) : [];
 
     return (
         <div className="animate-fade-in">
@@ -165,8 +181,7 @@ export default function Wellness() {
                 </div>
             </div>
 
-            {/* Desktop Filter Bar - Hidden when player is open */}
-            {!showPlayer && (
+            {!showPlayer && !showVideoPlayer && (
                 <div style={{
                     display: 'flex',
                     gap: '15px',
@@ -207,6 +222,7 @@ export default function Wellness() {
                             onPlay={(e) => handlePlay(item, e)}
                             onOpen={() => handleOpenPlayer(item)}
                             onFavorite={() => handleFavorite(item.id)}
+                            isVideo={isVideo(item)}
                         />
                     ))}
                 </div>
@@ -225,15 +241,26 @@ export default function Wellness() {
                     duration={duration}
                 />
             )}
+
+            {showVideoPlayer && (
+                <VideoPlayerOverlay
+                    track={currentTrack}
+                    onClose={() => setShowVideoPlayer(false)}
+                />
+            )}
         </div>
     );
 }
 
-function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite }) {
-    const displayImage = item.imageUrl || (item.type === 'music' ? natureImage : null);
-    const isMeditation = item.type === 'meditation';
+function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite, isVideo }) {
+    const getDisplayImage = () => {
+        if (!item.imageUrl) return item.type === 'music' ? natureImage : null;
+        if (item.imageUrl.startsWith('http')) return item.imageUrl;
+        return ASSET_MAP[item.imageUrl] || natureImage;
+    };
 
-    // Generate a unique gradient based on the title
+    const displayImage = getDisplayImage();
+
     const getGradient = (title) => {
         const colors = [
             'linear-gradient(135deg, #6D28D9 0%, #EC4899 100%)',
@@ -280,7 +307,7 @@ function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite }
                     position: 'absolute',
                     top: '15px',
                     left: '15px',
-                    background: 'rgba(255,255,255,0.2)',
+                    background: isVideo ? 'rgba(239, 68, 68, 0.8)' : 'rgba(255,255,255,0.2)',
                     backdropFilter: 'blur(10px)',
                     padding: '6px 14px',
                     borderRadius: '20px',
@@ -289,11 +316,14 @@ function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite }
                     fontWeight: '900',
                     textTransform: 'uppercase',
                     letterSpacing: '1px',
-                    border: '1px solid rgba(255,255,255,0.3)'
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
                 }}>
+                    {isVideo && <Video size={12} />}
                     {item.type}
                 </div>
-
 
                 <button
                     className="play-button-hover"
@@ -316,51 +346,45 @@ function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite }
                         boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
                     }}
                 >
-                    {isPaying ? <Pause fill="var(--primary)" size={24} /> : <Play fill="var(--primary)" size={24} />}
+                    {isPaying ? <Pause fill="var(--primary)" size={24} /> : (isVideo ? <Play fill="#EF4444" size={24} /> : <Play fill="var(--primary)" size={24} />)}
                 </button>
             </div>
 
             <div style={{ padding: '25px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-                    <h3 style={{ fontSize: '22px', fontWeight: '900', color: 'var(--bg-darker)', margin: 0 }}>{item.title}</h3>
-                </div>
+                <h3 style={{ fontSize: '22px', fontWeight: '900', color: 'var(--bg-darker)', marginBottom: '10px' }}>{item.title}</h3>
                 <p style={{ fontSize: '15px', color: '#64748B', lineHeight: '1.6', marginBottom: 'auto', paddingBottom: '20px' }}>
                     {item.description}
                 </p>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '15px', borderTop: '1px solid #F1F5F9' }}>
                     <div style={{
-                        background: 'var(--primary)',
+                        background: isVideo ? '#EF4444' : 'var(--primary)',
                         color: 'white',
                         padding: '6px 15px',
                         borderRadius: '20px',
                         fontSize: '13px',
                         fontWeight: '800',
-                        boxShadow: '0 4px 10px rgba(109, 40, 217, 0.2)'
+                        boxShadow: `0 4px 10px ${isVideo ? 'rgba(239, 68, 68, 0.2)' : 'rgba(109, 40, 217, 0.2)'}`
                     }}>
                         {item.duration || '5:00 min'}
                     </div>
 
-                    <div style={{ display: 'flex', gap: '15px' }}>
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onFavorite();
-                            }}
-                            style={{
-                                background: 'none',
-                                border: 'none',
-                                color: isFavorite ? '#EF4444' : '#64748B',
-                                cursor: 'pointer',
-                                padding: '0',
-                                display: 'flex',
-                                alignItems: 'center',
-                                transition: 'all 0.2s ease'
-                            }}
-                        >
-                            <Heart size={24} fill={isFavorite ? '#EF4444' : 'none'} />
-                        </button>
-                    </div>
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onFavorite();
+                        }}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: isFavorite ? '#EF4444' : '#64748B',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}
+                    >
+                        <Heart size={24} fill={isFavorite ? '#EF4444' : 'none'} />
+                    </button>
                 </div>
             </div>
         </div>

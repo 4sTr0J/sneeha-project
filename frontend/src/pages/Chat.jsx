@@ -1,17 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
-import { Send, Sparkles, Trash } from 'lucide-react';
+import { Send, Sparkles, Trash, Mic, MicOff } from 'lucide-react';
 import { chatService } from '../services/chatService';
 import { useAuth } from '../hooks/useAuth';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import brandingGif from '../assets/branding.gif';
 
 export default function Chat() {
     const { user } = useAuth();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isListening, setIsListening] = useState(false);
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
+    const recognitionRef = useRef(null);
+    const timerRef = useRef(null);
     const conversationId = 'ai-chat'; // Static conversation ID for AI chat
 
     useEffect(() => {
@@ -33,6 +37,92 @@ export default function Chat() {
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    const isListeningRef = useRef(false);
+
+    const handleVoiceInput = () => {
+        if (isListeningRef.current) {
+            stopListening();
+            return;
+        }
+
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            alert('Voice input is not supported in this browser.');
+            return;
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognitionRef.current = recognition;
+
+        recognition.continuous = true;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+
+        const forceStayOpen = { active: true }; // Flag to prevent onend from resetting state early
+
+        recognition.onstart = () => {
+            setIsListening(true);
+            isListeningRef.current = true;
+
+            // Clear any existing timer
+            if (timerRef.current) clearTimeout(timerRef.current);
+
+            // Set the 10s auto-stop
+            timerRef.current = setTimeout(() => {
+                forceStayOpen.active = false;
+                stopListening();
+            }, 10000);
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[event.results.length - 1][0].transcript;
+            setInput(prev => (prev ? prev + ' ' : '') + transcript);
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error', event.error);
+            // Don't stop everything on error, let onend handle it
+        };
+
+        recognition.onend = () => {
+            // If it ended but we still want it open (10s not up and not manually stopped)
+            if (forceStayOpen.active && isListeningRef.current) {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.error('Failed to restart recognition:', e);
+                    setIsListening(false);
+                    isListeningRef.current = false;
+                }
+            } else {
+                setIsListening(false);
+                isListeningRef.current = false;
+            }
+        };
+
+        try {
+            recognition.start();
+        } catch (error) {
+            console.error('Failed to start recognition:', error);
+            setIsListening(false);
+            isListeningRef.current = false;
+        }
+    };
+
+    const stopListening = () => {
+        setIsListening(false);
+        isListeningRef.current = false;
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+            timerRef.current = null;
+        }
+        if (recognitionRef.current) {
+            // Unset onend before stopping to prevent the restart logic
+            recognitionRef.current.onend = null;
+            recognitionRef.current.stop();
+        }
     };
 
     const handleSend = async (e) => {
@@ -165,10 +255,33 @@ export default function Chat() {
                                 textAlign: 'center',
                                 color: 'var(--text-muted)'
                             }}>
-                                <div>
-                                    <Sparkles size={48} style={{ marginBottom: '16px', color: 'var(--primary-light)' }} />
-                                    <p>Start a conversation with Sneha AI</p>
-                                </div>
+                                {isListening ? (
+                                    <div className="animate-fade-in">
+                                        <img
+                                            src={brandingGif}
+                                            alt="Listening..."
+                                            style={{
+                                                width: '280px',
+                                                height: '280px',
+                                                objectFit: 'contain',
+                                                marginBottom: '20px'
+                                            }}
+                                        />
+                                        <p style={{
+                                            color: 'var(--primary)',
+                                            fontWeight: '700',
+                                            fontSize: '18px',
+                                            opacity: 0.7
+                                        }}>
+                                            Listening<span className="loading-dots"></span>
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <Sparkles size={48} style={{ marginBottom: '16px', color: 'var(--primary-light)' }} />
+                                        <p>Start a conversation with Sneha AI</p>
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <div>
@@ -201,6 +314,36 @@ export default function Chat() {
                                         </div>
                                     </div>
                                 )}
+                                {isListening && (
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        padding: '20px',
+                                        animation: 'fadeIn 0.3s ease-out',
+                                        marginTop: '20px'
+                                    }}>
+                                        <img
+                                            src={brandingGif}
+                                            alt="Listening..."
+                                            style={{
+                                                width: '180px',
+                                                height: '180px',
+                                                objectFit: 'contain',
+                                                marginBottom: '10px'
+                                            }}
+                                        />
+                                        <p style={{
+                                            color: 'var(--primary)',
+                                            fontWeight: '600',
+                                            fontSize: '14px',
+                                            opacity: 0.7
+                                        }}>
+                                            Listening<span className="loading-dots"></span>
+                                        </p>
+                                    </div>
+                                )}
                                 <div ref={messagesEndRef} />
                             </div>
                         )}
@@ -218,6 +361,26 @@ export default function Chat() {
                             style={{ flex: 1, marginBottom: 0 }}
                             disabled={loading}
                         />
+                        <button
+                            type="button"
+                            onClick={handleVoiceInput}
+                            disabled={loading}
+                            style={{
+                                background: isListening ? '#ef4444' : 'rgba(139, 92, 246, 0.1)',
+                                border: `1px solid ${isListening ? '#ef4444' : 'var(--glass-border)'}`,
+                                color: isListening ? 'white' : 'var(--primary)',
+                                padding: '14px',
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.2s'
+                            }}
+                            title={isListening ? "Stop Listening" : "Voice Input"}
+                        >
+                            {isListening ? <MicOff size={20} /> : <Mic size={20} />}
+                        </button>
                         <Button
                             type="submit"
                             disabled={loading || !input.trim()}

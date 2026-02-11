@@ -18,7 +18,7 @@ export default function Layout() {
                 <div className="nav-container">
                     <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
                         <div className="logo-container">
-                            <img src={logo} alt="Sneha Logo" className="logo-animate" style={{ height: '80px', objectFit: 'contain' }} />
+                            <img src={logo} alt="Sneha Logo" className="logo-animate" style={{ height: '105px', objectFit: 'contain' }} />
                         </div>
                     </Link>
 
