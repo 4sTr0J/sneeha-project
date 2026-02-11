@@ -24,7 +24,7 @@ app.use(limiter);
 
 // CORS configuration for frontend
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5175'],
+    origin: ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5175', 'http://localhost:5174'],
     credentials: true
 }));
 
@@ -45,6 +45,7 @@ app.use('/api/wellness', require('./routes/wellnessRoutes'));
 app.use('/api/community', require('./routes/communityRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
 app.use('/api/music', require('./routes/musicRoutes'));
+app.use('/api/moods', require('./routes/moodRoutes'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

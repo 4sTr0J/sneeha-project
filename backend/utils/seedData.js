@@ -96,6 +96,48 @@ const communityData = [
         isPrivate: false
     },
     {
+        name: "Mental Wellness Circle",
+        description: "Supporting mental health and emotional wellbeing together.",
+        illnessType: "Mental Health",
+        memberCount: 342,
+        isPrivate: false
+    },
+    {
+        name: "Heart Health Warriors",
+        description: "Connecting those managing cardiovascular conditions.",
+        illnessType: "Cardiovascular",
+        memberCount: 278,
+        isPrivate: false
+    },
+    {
+        name: "Diabetes Support Network",
+        description: "Share tips, recipes, and support for diabetes management.",
+        illnessType: "Diabetes",
+        memberCount: 512,
+        isPrivate: false
+    },
+    {
+        name: "Chronic Pain Relief",
+        description: "Finding comfort and solutions for chronic pain together.",
+        illnessType: "Chronic Pain",
+        memberCount: 445,
+        isPrivate: false
+    },
+    {
+        name: "Respiratory Care Community",
+        description: "Support for asthma, COPD, and other respiratory conditions.",
+        illnessType: "Respiratory",
+        memberCount: 198,
+        isPrivate: false
+    },
+    {
+        name: "Autoimmune Alliance",
+        description: "United in managing autoimmune conditions.",
+        illnessType: "Autoimmune",
+        memberCount: 367,
+        isPrivate: false
+    },
+    {
         name: "Survivors Circle V1.0",
         description: "Connecting those who have overcome and are thriving.",
         illnessType: "Survivor",

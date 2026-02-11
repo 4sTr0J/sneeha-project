@@ -11,6 +11,7 @@ import Wellness from './pages/Wellness'
 import Chat from './pages/Chat'
 import Community from './pages/Community'
 import CommunityDetail from './pages/CommunityDetail'
+import MoodTracker from './pages/MoodTracker'
 import Preloader from './components/ui/Preloader'
 import Welcome from './pages/Welcome'
 
@@ -42,6 +43,7 @@ function App() {
                     <Route path="community/chats" element={<ProtectedRoute><Community /></ProtectedRoute>} />
                     <Route path="community/calls" element={<ProtectedRoute><Community /></ProtectedRoute>} />
                     <Route path="community/updates" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+                    <Route path="mood-tracker" element={<ProtectedRoute><MoodTracker /></ProtectedRoute>} />
                     <Route path="community/:id/:type" element={<ProtectedRoute><CommunityDetail /></ProtectedRoute>} />
                 </Route>
             </Routes>
