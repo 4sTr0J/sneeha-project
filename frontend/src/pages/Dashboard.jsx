@@ -3,15 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../context/ThemeContext';
-import { Brain, Users, Activity, Heart, Search, Calendar, Bell, Moon, Sun, X } from 'lucide-react';
+import { Brain, Users, Activity, Heart, Search, Calendar, Bell, Moon, Sun, X, ChevronLeft } from 'lucide-react';
 import doctorMascot from '../assets/wox.mp4';
-
+import SlidingPanel from '../components/layout/SlidingPanel';
 
 
 export default function Dashboard() {
     const { user } = useAuth();
     const { isDarkMode, toggleTheme } = useTheme();
     const [showNotifications, setShowNotifications] = useState(false);
+    const [panelOpen, setPanelOpen] = useState(false);
     const notificationRef = useRef(null);
     const navigate = useNavigate();
 
@@ -277,6 +278,7 @@ export default function Dashboard() {
                             />
                         )}
                     </AnimatePresence>
+
                     <button
                         onClick={toggleTheme}
                         style={{
@@ -348,6 +350,50 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+
+            <SlidingPanel isOpen={panelOpen} onClose={() => setPanelOpen(false)} />
+
+            {/* Floating Sliding Menu Button - Arrow Always Visible */}
+            <button
+                className="floating-menu-btn"
+                onClick={() => setPanelOpen(true)}
+                style={{
+                    position: 'fixed',
+                    top: '50%',
+                    right: '-12px',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    width: '48px',
+                    height: '80px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    color: 'var(--primary)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    zIndex: 1100,
+                    paddingLeft: '8px'
+                }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.right = '0';
+                    e.currentTarget.style.background = 'white';
+                    e.currentTarget.style.border = '2px solid var(--primary)';
+                    e.currentTarget.style.borderRight = 'none';
+                    e.currentTarget.style.borderTopLeftRadius = '16px';
+                    e.currentTarget.style.borderBottomLeftRadius = '16px';
+                    e.currentTarget.style.boxShadow = '-8px 0 30px rgba(109, 40, 217, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.right = '-12px';
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.border = 'none';
+                    e.currentTarget.style.borderRadius = '0';
+                    e.currentTarget.style.boxShadow = 'none';
+                }}
+            >
+                <ChevronLeft size={28} strokeWidth={2.5} />
+            </button>
 
             {/* Welcome Banner Desktop */}
             <motion.div
