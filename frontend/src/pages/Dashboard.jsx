@@ -5,15 +5,17 @@ import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../context/ThemeContext';
 import { Brain, Users, Activity, Heart, Search, Calendar, Bell, Moon, Sun, X, ChevronLeft } from 'lucide-react';
 import doctorMascot from '../assets/wox.mp4';
-import SlidingPanel from '../components/layout/SlidingPanel';
+
 
 
 export default function Dashboard() {
     const { user } = useAuth();
     const { isDarkMode, toggleTheme } = useTheme();
     const [showNotifications, setShowNotifications] = useState(false);
-    const [panelOpen, setPanelOpen] = useState(false);
+    const [showEvents, setShowEvents] = useState(false);
+
     const notificationRef = useRef(null);
+    const eventsRef = useRef(null);
     const navigate = useNavigate();
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -60,6 +62,9 @@ export default function Dashboard() {
             if (notificationRef.current && !notificationRef.current.contains(event.target)) {
                 setShowNotifications(false);
             }
+            if (eventsRef.current && !eventsRef.current.contains(event.target)) {
+                setShowEvents(false);
+            }
         }
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
@@ -76,178 +81,125 @@ export default function Dashboard() {
     return (
         <div className="animate-fade-in">
             {/* Top Stat Bar */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px', alignItems: 'flex-end' }}>
-                <div>
-                    <h1 style={{ fontSize: '28px', fontWeight: '800', color: 'var(--text-main)' }}>
+            {/* Top Stat Bar */}
+            <div className="dashboard-header">
+                <div className="dashboard-header-left">
+                    <h1 className="dashboard-header-title">
                         How are you feeling, {user?.name?.split(' ')[0]}?
                     </h1>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Let's continue your journey to healing today.</p>
+                    <p className="dashboard-header-subtitle">Let's continue your journey to healing today.</p>
                 </div>
-                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', zIndex: isSearchFocused ? 1100 : 10 }}>
-                        {/* Ultra-Sleek Search Icon */}
-                        <Search
-                            size={16}
-                            style={{
-                                position: 'absolute',
-                                left: '16px',
-                                zIndex: 10,
-                                color: isSearchFocused ? 'var(--primary)' : '#A1A1AA',
-                                transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-                            }}
-                        />
-
-                        {/* Ultra-Compact pill input */}
-                        <motion.input
-                            className="input"
-                            placeholder="Explore Sneha..."
-                            animate={{
-                                width: isSearchFocused ? '320px' : '220px',
-                                backgroundColor: isSearchFocused ? 'rgba(255, 255, 255, 0.98)' : 'rgba(255, 255, 255, 0.45)',
-                                boxShadow: isSearchFocused
-                                    ? '0 12px 24px rgba(109, 40, 217, 0.08), 0 0 0 2px rgba(109, 40, 217, 0.03)'
-                                    : '0 2px 6px rgba(0, 0, 0, 0.02)'
-                            }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                            style={{
-                                paddingLeft: '42px',
-                                paddingRight: searchTerm ? '32px' : '15px',
-                                borderRadius: '19px',
-                                marginBottom: 0,
-                                height: '38px',
-                                fontSize: '13.5px',
-                                fontWeight: '500',
-                                border: isSearchFocused ? '1px solid var(--primary)' : '1px solid rgba(167, 139, 250, 0.15)',
-                                backdropFilter: 'blur(10px)',
-                                color: 'var(--text-main)',
-                                transition: 'border 0.2s ease, background-color 0.2s ease'
-                            }}
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onFocus={() => setIsSearchFocused(true)}
-                        />
-
-                        {/* Ultra-Compact clear button */}
-                        <AnimatePresence>
+                <div className="dashboard-header-right">
+                    <div className="search-container">
+                        <div className="glass-card search-card-responsive" style={{
+                            boxShadow: isSearchFocused ? '0 12px 24px rgba(109, 40, 217, 0.08)' : '0 4px 15px rgba(0,0,0,0.03)',
+                        }}>
+                            <Search size={22} color="var(--text-muted)" />
+                            <input
+                                type="text"
+                                placeholder="Explore Sneha..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onFocus={() => setIsSearchFocused(true)}
+                                style={{
+                                    border: 'none',
+                                    outline: 'none',
+                                    background: 'transparent',
+                                    width: '100%',
+                                    fontSize: '16px',
+                                    color: 'var(--text-main)',
+                                    fontWeight: '500'
+                                }}
+                            />
                             {searchTerm && (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.5 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.5 }}
-                                    onClick={() => setSearchTerm('')}
-                                    style={{
-                                        position: 'absolute',
-                                        right: '12px',
-                                        cursor: 'pointer',
-                                        color: '#A1A1AA',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        padding: '4px'
-                                    }}
-                                    whileHover={{ color: 'var(--primary)' }}
-                                >
-                                    <X size={13} />
-                                </motion.div>
+                                <button onClick={() => setSearchTerm('')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#A1A1AA', display: 'flex' }}>
+                                    <X size={16} />
+                                </button>
                             )}
-                        </AnimatePresence>
+                        </div>
 
-                        {/* Compact Results Dropdown */}
+                        {/* Search Results Dropdown */}
                         <AnimatePresence>
                             {isSearchFocused && (
                                 <motion.div
-                                    initial={{ opacity: 0, y: 8 }}
+                                    initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 4 }}
+                                    exit={{ opacity: 0, y: 10 }}
                                     className="glass-card"
                                     style={{
                                         position: 'absolute',
-                                        top: '46px',
+                                        top: '65px',
                                         left: 0,
                                         width: '100%',
-                                        padding: '8px',
+                                        padding: '15px',
                                         zIndex: 1000,
-                                        textAlign: 'left',
-                                        borderRadius: '16px',
-                                        boxShadow: '0 15px 35px rgba(0,0,0,0.08)',
-                                        border: '1px solid rgba(109, 40, 217, 0.06)',
                                         background: 'rgba(255, 255, 255, 0.98)',
-                                        backdropFilter: 'blur(12px)'
+                                        backdropFilter: 'blur(12px)',
+                                        borderRadius: '20px',
+                                        boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
                                     }}
                                 >
                                     {searchTerm ? (
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                                             {filteredFeatures.length > 0 ? (
                                                 filteredFeatures.map((item, idx) => (
                                                     <div
                                                         key={idx}
-                                                        onClick={() => item.path !== '#' && navigate(item.path)}
+                                                        onClick={() => {
+                                                            if (item.path !== '#') navigate(item.path);
+                                                            setIsSearchFocused(false);
+                                                        }}
                                                         style={{
-                                                            padding: '8px 10px',
-                                                            borderRadius: '10px',
+                                                            padding: '12px',
+                                                            borderRadius: '12px',
                                                             cursor: 'pointer',
                                                             display: 'flex',
                                                             alignItems: 'center',
-                                                            gap: '10px',
-                                                            transition: 'all 0.2s ease'
+                                                            gap: '12px',
+                                                            transition: 'background 0.2s'
                                                         }}
-                                                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(109, 40, 217, 0.04)'}
+                                                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(109, 40, 217, 0.05)'}
                                                         onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
                                                     >
                                                         <div style={{
                                                             color: item.color,
-                                                            background: `${item.color}10`,
-                                                            width: '28px',
-                                                            height: '28px',
+                                                            background: `${item.color}15`,
+                                                            width: '32px',
+                                                            height: '32px',
                                                             borderRadius: '8px',
                                                             display: 'flex',
                                                             alignItems: 'center',
                                                             justifyContent: 'center'
                                                         }}>
-                                                            {item.icon && <item.icon.type size={16} />}
+                                                            {item.icon}
                                                         </div>
-                                                        <div style={{ flex: 1, overflow: 'hidden' }}>
-                                                            <div style={{ fontSize: '13.5px', fontWeight: '600', color: '#18181B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</div>
-                                                            <div style={{ fontSize: '11.5px', color: '#71717A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.desc}</div>
+                                                        <div>
+                                                            <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--bg-darker)' }}>{item.title}</div>
+                                                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{item.desc}</div>
                                                         </div>
                                                     </div>
                                                 ))
                                             ) : (
-                                                <div style={{ padding: '20px 0', textAlign: 'center', color: '#71717A' }}>
-                                                    <div style={{ fontSize: '13px', fontWeight: '500' }}>No results</div>
+                                                <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '14px' }}>
+                                                    No results found
                                                 </div>
                                             )}
                                         </div>
                                     ) : (
-                                        <div style={{ padding: '4px' }}>
-                                            <div style={{ fontSize: '9px', fontWeight: '800', color: '#A1A1AA', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '8px', paddingLeft: '6px' }}>Quick Starts</div>
-                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                                                {['Meditation', 'Mood'].map((tag) => (
-                                                    <button
-                                                        key={tag}
-                                                        onClick={() => setSearchTerm(tag)}
-                                                        style={{
-                                                            padding: '4px 8px',
-                                                            borderRadius: '8px',
-                                                            border: '1px solid rgba(167, 139, 250, 0.15)',
-                                                            background: 'white',
-                                                            fontSize: '11.5px',
-                                                            fontWeight: '600',
-                                                            color: '#3F3F46',
-                                                            cursor: 'pointer',
-                                                            transition: 'all 0.2s'
-                                                        }}
-                                                        onMouseOver={(e) => {
-                                                            e.currentTarget.style.borderColor = 'var(--primary)';
-                                                            e.currentTarget.style.color = 'var(--primary)';
-                                                        }}
-                                                        onMouseOut={(e) => {
-                                                            e.currentTarget.style.borderColor = 'rgba(167, 139, 250, 0.15)';
-                                                            e.currentTarget.style.color = '#3F3F46';
-                                                        }}
-                                                    >
+                                        <div style={{ padding: '5px' }}>
+                                            <div style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px' }}>Quick Suggestions</div>
+                                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                                {['Meditation', 'Community', 'Mood'].map(tag => (
+                                                    <span key={tag} onClick={() => setSearchTerm(tag)} style={{
+                                                        padding: '6px 12px',
+                                                        borderRadius: '20px',
+                                                        background: 'var(--page-bg)',
+                                                        fontSize: '13px',
+                                                        cursor: 'pointer',
+                                                        border: '1px solid rgba(0,0,0,0.05)'
+                                                    }}>
                                                         {tag}
-                                                    </button>
+                                                    </span>
                                                 ))}
                                             </div>
                                         </div>
@@ -255,92 +207,153 @@ export default function Dashboard() {
                                 </motion.div>
                             )}
                         </AnimatePresence>
-                    </div>
 
-                    {/* Minimal Overlay */}
-                    <AnimatePresence>
+                        {/* Overlay backdrop */}
                         {isSearchFocused && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
+                            <div
                                 onClick={() => setIsSearchFocused(false)}
                                 style={{
                                     position: 'fixed',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0,
-                                    background: 'rgba(24, 24, 27, 0.05)',
-                                    backdropFilter: 'blur(2px)',
-                                    zIndex: 1050
+                                    top: 0, left: 0, right: 0, bottom: 0,
+                                    zIndex: 9,
+                                    cursor: 'default'
                                 }}
                             />
                         )}
-                    </AnimatePresence>
+                    </div>
 
+                    {/* Theme Toggle */}
                     <button
                         onClick={toggleTheme}
                         style={{
                             background: 'white',
                             border: '1px solid #E9D5FF',
-                            borderRadius: '12px',
-                            width: '46px',
-                            height: '46px',
+                            borderRadius: '16px',
+                            width: '52px',
+                            height: '52px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             cursor: 'pointer',
                             color: 'var(--primary)',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                            transition: 'all 0.2s ease'
                         }}
                     >
-                        {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
+                        {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
                     </button>
-                    <div style={{ position: 'relative' }} ref={notificationRef}>
-                        <div
-                            className="hover-scale"
-                            onClick={() => setShowNotifications(!showNotifications)}
+
+                    {/* Events / Calendar */}
+                    <div style={{ position: 'relative' }} ref={eventsRef}>
+                        <button
+                            onClick={() => setShowEvents(!showEvents)}
                             style={{
                                 background: 'white',
-                                width: '46px',
-                                height: '46px',
-                                borderRadius: '12px',
+                                border: '1px solid #E9D5FF',
+                                borderRadius: '16px',
+                                width: '52px',
+                                height: '52px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                border: '1px solid #E9D5FF',
-                                color: 'var(--bg-darker)',
-                                position: 'relative',
+                                cursor: 'pointer',
+                                color: 'var(--primary)',
                                 boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                                cursor: 'pointer'
+                                transition: 'all 0.2s ease'
                             }}
                         >
-                            <Bell size={22} />
-                            <span style={{ position: 'absolute', top: '10px', right: '12px', width: '8px', height: '8px', background: '#EF4444', borderRadius: '50%' }}></span>
-                        </div>
+                            <Calendar size={24} />
+                        </button>
+
+                        {showEvents && (
+                            <div className="glass-card" style={{
+                                position: 'absolute',
+                                top: '65px',
+                                right: '-60px', /* Adjust slightly to not go off screen */
+                                width: '380px',
+                                padding: '25px',
+                                zIndex: 1000,
+                                textAlign: 'left',
+                                cursor: 'default',
+                                background: 'white',
+                                boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
+                            }} onClick={(e) => e.stopPropagation()}>
+                                {/* Upcoming Events Section */}
+                                <div style={{ marginBottom: '25px' }}>
+                                    <h4 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '15px', color: 'var(--bg-darker)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <Calendar size={18} /> Upcoming Events
+                                    </h4>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                        <EventItem time="4:00 PM" label="Meditation Session" />
+                                        <EventItem time="Tomorrow" label="Cancer Survivor Meet" />
+                                    </div>
+                                </div>
+
+                                {/* Daily Reminder Section */}
+                                <div>
+                                    <h4 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '10px', color: 'var(--bg-darker)' }}>Daily Reminder</h4>
+                                    <div style={{
+                                        background: 'linear-gradient(135deg, rgba(109, 40, 217, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%)',
+                                        padding: '15px',
+                                        borderRadius: '12px',
+                                        border: '1px solid rgba(167, 139, 250, 0.2)'
+                                    }}>
+                                        <p style={{ color: 'var(--text-main)', fontSize: '15px', lineHeight: '1.6', fontStyle: 'italic', fontWeight: '500' }}>
+                                            "Your illness doesn't define you. Your strength and resilience do. Take a deep breath."
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Notifications */}
+                    <div style={{ position: 'relative' }} ref={notificationRef}>
+                        <button
+                            onClick={() => setShowNotifications(!showNotifications)}
+                            style={{
+                                background: 'white',
+                                border: '1px solid #E9D5FF',
+                                borderRadius: '16px',
+                                width: '52px',
+                                height: '52px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                color: 'var(--bg-darker)',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                position: 'relative',
+                                transition: 'all 0.2s ease'
+                            }}
+                        >
+                            <Bell size={24} />
+                            <span style={{ position: 'absolute', top: '12px', right: '14px', width: '8px', height: '8px', background: '#EF4444', borderRadius: '50%' }}></span>
+                        </button>
 
                         {showNotifications && (
                             <div className="glass-card" style={{
                                 position: 'absolute',
-                                top: '55px',
+                                top: '65px',
                                 right: '0',
-                                width: '300px',
-                                padding: '15px',
+                                width: '320px',
+                                padding: '20px',
                                 zIndex: 1000,
                                 textAlign: 'left',
-                                cursor: 'default'
+                                cursor: 'default',
+                                background: 'white',
+                                boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
                             }} onClick={(e) => e.stopPropagation()}>
                                 <h4 style={{ margin: '0 0 15px', fontSize: '18px', fontWeight: '800', color: 'var(--bg-darker)' }}>Notifications</h4>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                     {notifications.map(n => (
                                         <div key={n.id} style={{
-                                            padding: '10px',
-                                            borderRadius: '10px',
+                                            padding: '12px',
+                                            borderRadius: '12px',
                                             background: n.read ? 'transparent' : 'rgba(109, 40, 217, 0.05)',
                                             border: '1px solid rgba(109, 40, 217, 0.1)'
                                         }}>
-                                            <div style={{ fontSize: '16px', fontWeight: '700', color: 'var(--bg-darker)', marginBottom: '4px' }}>{n.title}</div>
+                                            <div style={{ fontSize: '15px', fontWeight: '700', color: 'var(--bg-darker)', marginBottom: '4px' }}>{n.title}</div>
                                             <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{n.time}</div>
                                         </div>
                                     ))}
@@ -351,80 +364,19 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <SlidingPanel isOpen={panelOpen} onClose={() => setPanelOpen(false)} />
-
-            {/* Floating Sliding Menu Button - Arrow Always Visible */}
-            <button
-                className="floating-menu-btn"
-                onClick={() => setPanelOpen(true)}
-                style={{
-                    position: 'fixed',
-                    top: '50%',
-                    right: '-12px',
-                    transform: 'translateY(-50%)',
-                    background: 'transparent',
-                    border: 'none',
-                    width: '48px',
-                    height: '80px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    color: 'var(--primary)',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    zIndex: 1100,
-                    paddingLeft: '8px'
-                }}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.right = '0';
-                    e.currentTarget.style.background = 'white';
-                    e.currentTarget.style.border = '2px solid var(--primary)';
-                    e.currentTarget.style.borderRight = 'none';
-                    e.currentTarget.style.borderTopLeftRadius = '16px';
-                    e.currentTarget.style.borderBottomLeftRadius = '16px';
-                    e.currentTarget.style.boxShadow = '-8px 0 30px rgba(109, 40, 217, 0.3)';
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.right = '-12px';
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.border = 'none';
-                    e.currentTarget.style.borderRadius = '0';
-                    e.currentTarget.style.boxShadow = 'none';
-                }}
-            >
-                <ChevronLeft size={28} strokeWidth={2.5} />
-            </button>
 
             {/* Welcome Banner Desktop */}
             <motion.div
-                className="welcome-banner-desktop"
+                className="welcome-banner-responsive"
                 whileHover={{
                     boxShadow: '0 30px 60px rgba(109, 40, 217, 0.15)',
                     y: -4
                 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1.2fr 1fr',
-                    gap: '0',
-                    padding: '0',
-                    alignItems: 'stretch',
-                    overflow: 'hidden',
-                    background: 'white',
-                    border: '1px solid rgba(167, 139, 250, 0.15)',
-                    position: 'relative',
-                    boxShadow: '0 20px 40px rgba(109, 40, 217, 0.05)',
-                    cursor: 'default'
-                }}
             >
                 {/* Left Side: Content Box */}
-                <div style={{
-                    padding: '50px 60px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    background: 'transparent'
-                }}>
+                {/* Left Side: Content Box */}
+                <div className="welcome-content">
                     <div style={{ background: 'rgba(109, 40, 217, 0.1)', color: 'var(--primary)', padding: '6px 15px', borderRadius: '20px', display: 'inline-block', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', marginBottom: '20px', letterSpacing: '0.5px', width: 'fit-content' }}>
                         NEW CONTENT AVAILABLE
                     </div>
@@ -440,16 +392,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Right Side: Mascot Box */}
-                <div style={{
-                    position: 'relative',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'transparent'
-                }}>
-
-
-                    {/* Smoothly Animated Mascot Video */}
+                <div className="welcome-mascot">
                     <motion.video
                         src={doctorMascot}
                         autoPlay
@@ -479,53 +422,31 @@ export default function Dashboard() {
                 </div>
             </motion.div>
 
-            {/* Content Section */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '40px' }}>
-                <div>
-                    <h3 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '25px', color: 'var(--bg-darker)' }}>
-                        Recommended for You
-                    </h3>
-                    <div className="pref-grid-desktop">
-                        {filteredFeatures.length > 0 ? (
-                            filteredFeatures.map((item, index) => (
-                                <PreferenceCard
-                                    key={index}
-                                    title={item.title}
-                                    icon={item.icon}
-                                    desc={item.desc}
-                                    color={item.color}
-                                    onClick={() => item.path !== '#' && navigate(item.path)}
-                                />
-                            ))
-                        ) : (
-                            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
-                                No results found for "{searchTerm}".
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Sidebar Widget (Desktop Only) */}
-                <div>
-                    <div className="glass-card" style={{ marginBottom: '30px' }}>
-                        <h4 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <Calendar size={20} color="var(--primary)" />
-                            Upcoming Events
-                        </h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                            <EventItem time="4:00 PM" label="Meditation Session" />
-                            <EventItem time="Tomorrow" label="Cancer Survivor Meet" />
+            {/* Content Section - Full Width */}
+            <div style={{ paddingBottom: '40px' }}>
+                <h3 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '25px', color: 'var(--bg-darker)' }}>
+                    Recommended for You
+                </h3>
+                <div className="pref-grid-desktop" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+                    {filteredFeatures.length > 0 ? (
+                        filteredFeatures.map((item, index) => (
+                            <PreferenceCard
+                                key={index}
+                                title={item.title}
+                                icon={item.icon}
+                                desc={item.desc}
+                                color={item.color}
+                                onClick={() => item.path !== '#' && navigate(item.path)}
+                            />
+                        ))
+                    ) : (
+                        <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+                            No results found for "{searchTerm}".
                         </div>
-                    </div>
-
-                    <div className="glass-card" style={{ background: 'white', border: '1px solid #E9D5FF', color: 'var(--text-main)' }}>
-                        <h4 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '15px' }}>Daily Reminder</h4>
-                        <p style={{ color: 'var(--text-main)', fontSize: '16px', lineHeight: '1.6', fontStyle: 'italic' }}>
-                            "Your illness doesn't define you. Your strength and resilience do. Take a deep breath."
-                        </p>
-                    </div>
+                    )}
                 </div>
             </div>
+
         </div >
     );
 }
@@ -560,3 +481,5 @@ function EventItem({ time, label }) {
         </div>
     );
 }
+
+

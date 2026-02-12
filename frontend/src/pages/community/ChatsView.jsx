@@ -1,6 +1,18 @@
-import { Search, MoreVertical, Edit, FileText, UserPlus, Filter } from 'lucide-react';
+import { useState } from 'react';
+import { Search, MoreVertical, Edit, FileText, UserPlus, Filter, Check } from 'lucide-react';
 
 export default function ChatsView() {
+    const [isEditing, setIsEditing] = useState(false);
+    const [selectedChats, setSelectedChats] = useState([]);
+
+    const toggleSelection = (id) => {
+        if (selectedChats.includes(id)) {
+            setSelectedChats(selectedChats.filter(chatId => chatId !== id));
+        } else {
+            setSelectedChats([...selectedChats, id]);
+        }
+    };
+
     const chats = [
         { id: 1, name: 'Nuwan Jayasinghe', msg: 'https://www.figma.com/design/Q8MP1hMeh...', time: 'Monday', pin: true, img: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop' },
         { id: 2, name: 'Tharushi Perera', msg: 'Can we schedule the session for tomorrow?', time: 'Yesterday', pin: true, img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop' },
@@ -39,60 +51,123 @@ export default function ChatsView() {
                 }}>
                     <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--text-main)', margin: 0 }}>Chats</h2>
                     <div style={{ display: 'flex', gap: '20px', color: 'var(--text-main)' }}>
-                        <Edit size={22} style={{ cursor: 'pointer' }} />
+                        <div
+                            onClick={() => setIsEditing(!isEditing)}
+                            style={{
+                                cursor: 'pointer',
+                                color: isEditing ? 'var(--primary)' : 'inherit',
+                                background: isEditing ? 'rgba(109, 40, 217, 0.1)' : 'transparent',
+                                borderRadius: '8px',
+                                padding: '4px',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            <Edit size={22} />
+                        </div>
                         <MoreVertical size={22} style={{ cursor: 'pointer' }} />
                     </div>
                 </div>
 
                 {/* Search */}
-                <div style={{ padding: '0 20px 10px' }}>
-                    <div style={{
-                        background: 'var(--input-bg)',
-                        borderRadius: '20px',
-                        padding: '10px 15px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px'
-                    }}>
-                        <Search size={18} color="var(--text-muted)" />
-                        <input
-                            placeholder="Search or start a new chat"
-                            style={{
-                                border: 'none',
-                                background: 'transparent',
-                                outline: 'none',
-                                width: '100%',
-                                fontSize: '15px',
-                                color: 'var(--text-main)'
-                            }}
-                        />
+                {!isEditing && (
+                    <div style={{ padding: '0 20px 10px' }}>
+                        <div style={{
+                            background: 'var(--input-bg)',
+                            borderRadius: '20px',
+                            padding: '10px 15px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px'
+                        }}>
+                            <Search size={18} color="var(--text-muted)" />
+                            <input
+                                placeholder="Search or start a new chat"
+                                style={{
+                                    border: 'none',
+                                    background: 'transparent',
+                                    outline: 'none',
+                                    width: '100%',
+                                    fontSize: '15px',
+                                    color: 'var(--text-main)'
+                                }}
+                            />
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Filters */}
-                <div style={{
-                    display: 'flex',
-                    gap: '8px',
-                    padding: '10px 20px',
-                    overflowX: 'auto',
-                    scrollbarWidth: 'none'
-                }}>
-                    <FilterToken label="All" active />
-                    <FilterToken label="Unread" />
-                    <FilterToken label="Favourites" />
-                    <FilterToken label="Groups" />
-                </div>
+                {!isEditing && (
+                    <div style={{
+                        display: 'flex',
+                        gap: '8px',
+                        padding: '10px 20px',
+                        overflowX: 'auto',
+                        scrollbarWidth: 'none'
+                    }}>
+                        <FilterToken label="All" active />
+                        <FilterToken label="Unread" />
+                        <FilterToken label="Favourites" />
+                        <FilterToken label="Groups" />
+                    </div>
+                )}
+
+                {/* Editing Actions Bar */}
+                {isEditing && (
+                    <div style={{
+                        padding: '10px 20px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        background: 'var(--input-bg)',
+                        margin: '0 20px 10px',
+                        borderRadius: '12px'
+                    }}>
+                        <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)' }}>
+                            {selectedChats.length} Selected
+                        </span>
+                        <div style={{ display: 'flex', gap: '15px' }}>
+                            <button style={{ border: 'none', background: 'none', color: '#EF4444', fontWeight: '600', cursor: 'pointer' }}>Delete</button>
+                            <button style={{ border: 'none', background: 'none', color: 'var(--primary)', fontWeight: '600', cursor: 'pointer' }}>Archive</button>
+                        </div>
+                    </div>
+                )}
 
                 {/* Chat List */}
                 <div style={{ flex: 1, overflowY: 'auto' }}>
                     {chats.map(chat => (
-                        <div key={chat.id} className="interactive-row" style={{
-                            display: 'flex',
-                            gap: '15px',
-                            padding: '12px 20px',
-                            cursor: 'pointer',
-                            alignItems: 'center'
-                        }}>
+                        <div
+                            key={chat.id}
+                            className="interactive-row"
+                            onClick={() => {
+                                if (isEditing) {
+                                    toggleSelection(chat.id);
+                                }
+                            }}
+                            style={{
+                                display: 'flex',
+                                gap: '15px',
+                                padding: '12px 20px',
+                                cursor: 'pointer',
+                                alignItems: 'center',
+                                background: selectedChats.includes(chat.id) ? 'rgba(109, 40, 217, 0.05)' : 'transparent'
+                            }}
+                        >
+                            {isEditing && (
+                                <div style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    borderRadius: '6px',
+                                    border: selectedChats.includes(chat.id) ? 'none' : '2px solid #E5E7EB',
+                                    background: selectedChats.includes(chat.id) ? 'var(--primary)' : 'transparent',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'all 0.2s'
+                                }}>
+                                    {selectedChats.includes(chat.id) && <Check size={14} color="white" />}
+                                </div>
+                            )}
+
                             <img src={chat.img} alt={chat.name} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }} />
                             <div style={{ flex: 1, borderBottom: '1px solid var(--input-bg)', paddingBottom: '12px', minWidth: 0 }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
@@ -117,7 +192,7 @@ export default function ChatsView() {
                                         textOverflow: 'ellipsis',
                                         maxWidth: '240px'
                                     }}>{chat.msg}</p>
-                                    {chat.unread && (
+                                    {chat.unread && !isEditing && (
                                         <div style={{
                                             background: '#22C55E',
                                             color: '#000',

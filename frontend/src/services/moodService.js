@@ -9,5 +9,10 @@ export const moodService = {
     async saveMoodEntry(moodData) {
         const response = await api.post('/moods', moodData);
         return response.data;
+    },
+
+    async clearMoodHistory() {
+        const response = await api.delete('/moods');
+        return response.data;
     }
 };

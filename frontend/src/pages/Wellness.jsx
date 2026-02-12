@@ -1,11 +1,46 @@
 import { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Heart, Search, Video } from 'lucide-react';
+import { Play, Pause, Heart, Search, Video, Wind } from 'lucide-react';
 import { wellnessService } from '../services/wellnessService';
 import MusicPlayerOverlay from '../components/wellness/MusicPlayerOverlay';
 import VideoPlayerOverlay from '../components/wellness/VideoPlayerOverlay';
 import natureImage from '../assets/nature_meditation.png';
 
 const ASSET_MAP = {};
+
+import BreathingOverlay from '../components/wellness/BreathingOverlay';
+
+const BREATHING_EXERCISES = [
+    {
+        id: 'b-4-7-8',
+        title: '4-7-8 Relaxing Breath',
+        description: 'A rhythmic pattern to reduce anxiety and help you sleep. Inhale 4s, Hold 7s, Exhale 8s.',
+        type: 'breathing',
+        duration: '5 min',
+        imageUrl: null,
+        color: '#8B5CF6',
+        pattern: { inhale: 4000, holdIn: 7000, exhale: 8000, holdOut: 0 }
+    },
+    {
+        id: 'b-box',
+        title: 'Box Breathing',
+        description: 'Heighten performance and concentration while relieving stress. All phases 4 seconds.',
+        type: 'breathing',
+        duration: '5 min',
+        imageUrl: null,
+        color: '#3B82F6',
+        pattern: { inhale: 4000, holdIn: 4000, exhale: 4000, holdOut: 4000 }
+    },
+    {
+        id: 'b-coherent',
+        title: 'Coherent Breathing',
+        description: 'Balance your nervous system with equal inhaling and exhaling (5s each).',
+        type: 'breathing',
+        duration: '5 min',
+        imageUrl: null,
+        color: '#10B981',
+        pattern: { inhale: 5000, holdIn: 0, exhale: 5000, holdOut: 0 }
+    }
+];
 
 export default function Wellness() {
     const [content, setContent] = useState([]);
@@ -17,11 +52,13 @@ export default function Wellness() {
     const [favorites, setFavorites] = useState([]);
     const [showPlayer, setShowPlayer] = useState(false);
     const [showVideoPlayer, setShowVideoPlayer] = useState(false);
+    const [activeExercise, setActiveExercise] = useState(null);
     const [audioProgress, setAudioProgress] = useState(0);
     const [duration, setDuration] = useState(0);
     const audioRef = useRef(new Audio());
 
     const isVideo = (item) => {
+        if (!item) return false;
         return item.type === 'video' || (item.audioUrl && (item.audioUrl.includes('youtube.com') || item.audioUrl.includes('youtu.be')));
     };
 
@@ -66,9 +103,14 @@ export default function Wellness() {
 
     const loadContent = async () => {
         try {
-            const filterType = filter === 'all' ? null : filter;
-            const data = await wellnessService.getWellnessContent(filterType);
-            setContent(data || []);
+            const filterType = filter === 'all' || filter === 'breathing' ? null : filter; // Don't filter out breathing on backend if handled locally, but backend likely has no 'breathing' type yet
+            const data = await wellnessService.getWellnessContent(filterType === 'breathing' ? null : filterType); // If filter is breathing, maybe we shouldn't fetch audio? Or fetch all.
+            // Simplified:
+            const fetchedData = await wellnessService.getWellnessContent(filter === 'breathing' ? 'all' : (filter === 'all' ? null : filter));
+            // Actually, if filter is 'breathing', we might not want backend data if it doesn't exist.
+            // But preserving existing logic:
+            setContent(fetchedData || []);
+
             const favs = await wellnessService.getFavorites();
             setFavorites(favs.map(f => f.id));
         } catch (error) {
@@ -79,6 +121,11 @@ export default function Wellness() {
     };
 
     const handleOpenPlayer = (item) => {
+        if (item.type === 'breathing') {
+            setActiveExercise(item);
+            return;
+        }
+
         if (isVideo(item)) {
             setCurrentTrack(item);
             setShowVideoPlayer(true);
@@ -101,6 +148,11 @@ export default function Wellness() {
 
     const handlePlay = (item, e) => {
         if (e) e.stopPropagation();
+
+        if (item.type === 'breathing') {
+            setActiveExercise(item);
+            return;
+        }
 
         if (isVideo(item)) {
             handleOpenPlayer(item);
@@ -169,13 +221,13 @@ export default function Wellness() {
                 </div>
                 <div style={{ display: 'flex', gap: '15px' }}>
                     <div className="search-input-wrapper" style={{ position: 'relative' }}>
-                        <Search size={18} style={{ position: 'absolute', left: '15px', top: '15px', color: '#9CA3AF', zIndex: 1 }} />
+                        <Search size={16} style={{ position: 'absolute', left: '15px', top: '12px', color: '#9CA3AF', zIndex: 1 }} />
                         <input
                             className="input"
                             placeholder="Search library..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            style={{ width: '350px', paddingLeft: '45px', marginBottom: 0, position: 'relative', zIndex: 0 }}
+                            style={{ width: '280px', height: '40px', paddingLeft: '40px', marginBottom: 0, position: 'relative', zIndex: 0, fontSize: '14px' }}
                         />
                     </div>
                 </div>
@@ -207,25 +259,55 @@ export default function Wellness() {
                 <div style={{ textAlign: 'center', padding: '100px 0' }}>
                     <div className="gradient-text" style={{ fontSize: '24px', fontWeight: '700' }}>Preparing your wellness space...</div>
                 </div>
-            ) : filteredContent.length === 0 ? (
-                <div className="glass-card" style={{ textAlign: 'center', padding: '100px 0' }}>
-                    <h3 style={{ fontSize: '20px', color: '#9CA3AF' }}>No resources found matching your search.</h3>
-                </div>
             ) : (
-                <div className="pref-grid-desktop">
-                    {filteredContent.map((item) => (
-                        <WellnessCard
-                            key={item.id}
-                            item={item}
-                            isPaying={currentTrack?.id === item.id && isPlaying}
-                            isFavorite={favorites.includes(item.id)}
-                            onPlay={(e) => handlePlay(item, e)}
-                            onOpen={() => handleOpenPlayer(item)}
-                            onFavorite={() => handleFavorite(item.id)}
-                            isVideo={isVideo(item)}
-                        />
-                    ))}
-                </div>
+                <>
+                    {/* Interactive Breathing Exercises */}
+                    {(filter === 'all' || filter === 'breathing') && (
+                        <div style={{ marginBottom: '50px' }}>
+                            <div className="pref-grid-desktop">
+                                {BREATHING_EXERCISES.map((item) => (
+                                    <BreathingCard
+                                        key={item.id}
+                                        item={item}
+                                        onClick={() => setActiveExercise(item)}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Wellness Content Grid */}
+                    {filter !== 'breathing' && (
+                        <div className="pref-grid-desktop">
+                            {filteredContent.length > 0 ? (
+                                filteredContent.map((item) => (
+                                    <WellnessCard
+                                        key={item.id}
+                                        item={item}
+                                        isPaying={isPlaying && currentTrack?.id === item.id}
+                                        isFavorite={favorites.includes(item.id)}
+                                        onPlay={(e) => handlePlay(item, e)}
+                                        onOpen={() => handleOpenPlayer(item)}
+                                        onFavorite={() => handleFavorite(item.id)}
+                                        isVideo={isVideo(item)}
+                                    />
+                                ))
+                            ) : (
+                                <div style={{
+                                    gridColumn: '1 / -1',
+                                    textAlign: 'center',
+                                    padding: '60px 20px',
+                                    background: 'rgba(255, 255, 255, 0.5)',
+                                    borderRadius: '24px',
+                                    border: '1px dashed #E9D5FF'
+                                }}>
+                                    <h3 style={{ fontSize: '20px', fontWeight: '700', color: 'var(--bg-darker)', marginBottom: '10px' }}>No resources found</h3>
+                                    <p style={{ color: '#6B7280' }}>We couldn't find any items matching your search or category.</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </>
             )}
 
             {showPlayer && (
@@ -248,6 +330,97 @@ export default function Wellness() {
                     onClose={() => setShowVideoPlayer(false)}
                 />
             )}
+
+            {activeExercise && (
+                <BreathingOverlay
+                    exercise={activeExercise}
+                    onClose={() => setActiveExercise(null)}
+                />
+            )}
+        </div>
+    );
+}
+
+function BreathingCard({ item, onClick }) {
+    return (
+        <div onClick={onClick} className="glass-card wellness-card-hover" style={{
+            padding: '25px',
+            background: 'white',
+            borderRadius: '24px',
+            border: `1px solid ${item.color}30`,
+            cursor: 'pointer',
+            position: 'relative',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            height: '100%',
+            transition: 'transform 0.2s, box-shadow 0.2s'
+        }}>
+            {/* Decorative background circle */}
+            <div style={{
+                position: 'absolute',
+                top: '-20px',
+                right: '-20px',
+                width: '100px',
+                height: '100px',
+                borderRadius: '50%',
+                background: item.color,
+                opacity: 0.1
+            }} />
+
+            <div>
+                <div style={{
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '16px',
+                    background: `${item.color}20`,
+                    color: item.color,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '20px'
+                }}>
+                    <Wind size={24} />
+                </div>
+
+                <h3 style={{ fontSize: '20px', fontWeight: '800', color: 'var(--bg-darker)', marginBottom: '10px' }}>
+                    {item.title}
+                </h3>
+
+                <p style={{ fontSize: '14px', color: '#64748B', lineHeight: '1.5', marginBottom: '20px' }}>
+                    {item.description}
+                </p>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
+                <span style={{
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    color: item.color,
+                    background: `${item.color}10`,
+                    padding: '6px 12px',
+                    borderRadius: '12px'
+                }}>
+                    {item.duration}
+                </span>
+
+                <button style={{
+                    background: item.color,
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '10px 20px',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px'
+                }}>
+                    <Play size={14} fill="white" /> Start
+                </button>
+            </div>
         </div>
     );
 }
@@ -322,6 +495,7 @@ function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite, 
                     gap: '6px'
                 }}>
                     {isVideo && <Video size={12} />}
+                    {item.type === 'breathing' && <Wind size={12} />}
                     {item.type}
                 </div>
 

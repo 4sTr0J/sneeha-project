@@ -23,7 +23,7 @@ router.get('/', protect, async (req, res) => {
 // @access  Private
 router.post('/', protect, async (req, res) => {
     try {
-        const { mood, note, date, time } = req.body;
+        const { mood, note, date, time, intensity, activities } = req.body;
 
         if (!mood || !date || !time) {
             return res.status(400).json({ message: 'Please provide mood, date, and time' });
@@ -34,10 +34,26 @@ router.post('/', protect, async (req, res) => {
             mood,
             note,
             date,
-            time
+            time,
+            intensity,
+            activities
         });
 
         res.status(201).json(newMood);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// @desc    Clear all mood history
+// @route   DELETE /api/moods
+// @access  Private
+router.delete('/', protect, async (req, res) => {
+    try {
+        await Mood.destroy({
+            where: { userId: req.user.id }
+        });
+        res.json({ message: 'Mood history cleared' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

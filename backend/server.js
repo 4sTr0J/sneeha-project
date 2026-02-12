@@ -18,7 +18,8 @@ app.use(helmet());
 // Rate limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
+    max: 1000, // Increased for development
+    message: 'Too many requests from this IP, please try again after 15 minutes'
 });
 app.use(limiter);
 
@@ -32,7 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Connect to SQLite
-sequelize.sync()
+sequelize.sync({ alter: true })
     .then(() => console.log('SQLite Database Synced'))
     .catch(err => {
         console.error('Database Sync Error:', err.message);

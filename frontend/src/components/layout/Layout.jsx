@@ -15,7 +15,7 @@ export default function Layout() {
         <div className="app-layout">
             <Header />
 
-            <main className="main-content" style={{ paddingTop: location.pathname.includes('/community') ? '100px' : '100px' }}>
+            <main className="main-content" style={{ paddingTop: location.pathname.includes('/community') ? '150px' : '110px' }}>
                 <Outlet />
             </main>
         </div>

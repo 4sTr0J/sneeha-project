@@ -19,6 +19,14 @@ const Mood = sequelize.define('Mood', {
         type: DataTypes.TEXT,
         allowNull: true
     },
+    intensity: {
+        type: DataTypes.INTEGER,
+        defaultValue: 5
+    },
+    activities: {
+        type: DataTypes.JSON,
+        defaultValue: []
+    },
     date: {
         type: DataTypes.STRING,
         allowNull: false
