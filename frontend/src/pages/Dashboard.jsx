@@ -3,10 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../context/ThemeContext';
-import { Brain, Users, Activity, Heart, Search, Calendar, Bell, Moon, Sun, X, ChevronLeft } from 'lucide-react';
+import { Brain, Users, Activity, Heart, Search, Calendar, Bell, Moon, Sun, X } from 'lucide-react';
 import doctorMascot from '../assets/wox.mp4';
-
-
 
 export default function Dashboard() {
     const { user } = useAuth();
@@ -78,11 +76,37 @@ export default function Dashboard() {
         { id: 3, title: 'Your profile is 80% complete', time: '2d ago', read: true }
     ];
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { y: 20, opacity: 0 },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: {
+                duration: 0.5,
+                ease: "easeOut"
+            }
+        }
+    };
+
     return (
-        <div className="animate-fade-in">
+        <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+            className="animate-fade-in"
+        >
             {/* Top Stat Bar */}
-            {/* Top Stat Bar */}
-            <div className="dashboard-header">
+            <motion.div variants={itemVariants} className="dashboard-header">
                 <div className="dashboard-header-left">
                     <h1 className="dashboard-header-title">
                         How are you feeling, {user?.name?.split(' ')[0]}?
@@ -91,9 +115,13 @@ export default function Dashboard() {
                 </div>
                 <div className="dashboard-header-right">
                     <div className="search-container">
-                        <div className="glass-card search-card-responsive" style={{
-                            boxShadow: isSearchFocused ? '0 12px 24px rgba(109, 40, 217, 0.08)' : '0 4px 15px rgba(0,0,0,0.03)',
-                        }}>
+                        <motion.div
+                            className="glass-card search-card-responsive"
+                            style={{
+                                boxShadow: isSearchFocused ? '0 12px 24px rgba(109, 40, 217, 0.08)' : '0 4px 15px rgba(0,0,0,0.03)',
+                            }}
+                            whileTap={{ scale: 0.99 }}
+                        >
                             <Search size={22} color="var(--text-muted)" />
                             <input
                                 type="text"
@@ -116,9 +144,8 @@ export default function Dashboard() {
                                     <X size={16} />
                                 </button>
                             )}
-                        </div>
+                        </motion.div>
 
-                        {/* Search Results Dropdown */}
                         <AnimatePresence>
                             {isSearchFocused && (
                                 <motion.div
@@ -133,7 +160,7 @@ export default function Dashboard() {
                                         width: '100%',
                                         padding: '15px',
                                         zIndex: 1000,
-                                        background: 'rgba(255, 255, 255, 0.98)',
+                                        background: isDarkMode ? 'var(--card-bg)' : 'rgba(255, 255, 255, 0.98)',
                                         backdropFilter: 'blur(12px)',
                                         borderRadius: '20px',
                                         boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
@@ -143,8 +170,9 @@ export default function Dashboard() {
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                                             {filteredFeatures.length > 0 ? (
                                                 filteredFeatures.map((item, idx) => (
-                                                    <div
+                                                    <motion.div
                                                         key={idx}
+                                                        whileHover={{ x: 5, background: 'rgba(109, 40, 217, 0.05)' }}
                                                         onClick={() => {
                                                             if (item.path !== '#') navigate(item.path);
                                                             setIsSearchFocused(false);
@@ -158,8 +186,6 @@ export default function Dashboard() {
                                                             gap: '12px',
                                                             transition: 'background 0.2s'
                                                         }}
-                                                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(109, 40, 217, 0.05)'}
-                                                        onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
                                                     >
                                                         <div style={{
                                                             color: item.color,
@@ -174,10 +200,10 @@ export default function Dashboard() {
                                                             {item.icon}
                                                         </div>
                                                         <div>
-                                                            <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--bg-darker)' }}>{item.title}</div>
+                                                            <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)' }}>{item.title}</div>
                                                             <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{item.desc}</div>
                                                         </div>
-                                                    </div>
+                                                    </motion.div>
                                                 ))
                                             ) : (
                                                 <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '14px' }}>
@@ -190,16 +216,23 @@ export default function Dashboard() {
                                             <div style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px' }}>Quick Suggestions</div>
                                             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                                                 {['Meditation', 'Community', 'Mood'].map(tag => (
-                                                    <span key={tag} onClick={() => setSearchTerm(tag)} style={{
-                                                        padding: '6px 12px',
-                                                        borderRadius: '20px',
-                                                        background: 'var(--page-bg)',
-                                                        fontSize: '13px',
-                                                        cursor: 'pointer',
-                                                        border: '1px solid rgba(0,0,0,0.05)'
-                                                    }}>
+                                                    <motion.span
+                                                        key={tag}
+                                                        whileHover={{ scale: 1.05 }}
+                                                        whileTap={{ scale: 0.95 }}
+                                                        onClick={() => setSearchTerm(tag)}
+                                                        style={{
+                                                            padding: '6px 12px',
+                                                            borderRadius: '20px',
+                                                            background: 'var(--page-bg)',
+                                                            fontSize: '13px',
+                                                            cursor: 'pointer',
+                                                            border: '1px solid rgba(0,0,0,0.05)',
+                                                            color: 'var(--text-main)'
+                                                        }}
+                                                    >
                                                         {tag}
-                                                    </span>
+                                                    </motion.span>
                                                 ))}
                                             </div>
                                         </div>
@@ -208,7 +241,6 @@ export default function Dashboard() {
                             )}
                         </AnimatePresence>
 
-                        {/* Overlay backdrop */}
                         {isSearchFocused && (
                             <div
                                 onClick={() => setIsSearchFocused(false)}
@@ -222,8 +254,9 @@ export default function Dashboard() {
                         )}
                     </div>
 
-                    {/* Theme Toggle */}
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.1, rotate: 180 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={toggleTheme}
                         style={{
                             background: 'white',
@@ -237,15 +270,15 @@ export default function Dashboard() {
                             cursor: 'pointer',
                             color: 'var(--primary)',
                             boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                            transition: 'all 0.2s ease'
                         }}
                     >
                         {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
-                    </button>
+                    </motion.button>
 
-                    {/* Events / Calendar */}
                     <div style={{ position: 'relative' }} ref={eventsRef}>
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() => setShowEvents(!showEvents)}
                             style={{
                                 background: 'white',
@@ -259,57 +292,65 @@ export default function Dashboard() {
                                 cursor: 'pointer',
                                 color: 'var(--primary)',
                                 boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                                transition: 'all 0.2s ease'
                             }}
                         >
                             <Calendar size={24} />
-                        </button>
+                        </motion.button>
 
-                        {showEvents && (
-                            <div className="glass-card" style={{
-                                position: 'absolute',
-                                top: '65px',
-                                right: '-60px', /* Adjust slightly to not go off screen */
-                                width: '380px',
-                                padding: '25px',
-                                zIndex: 1000,
-                                textAlign: 'left',
-                                cursor: 'default',
-                                background: 'white',
-                                boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
-                            }} onClick={(e) => e.stopPropagation()}>
-                                {/* Upcoming Events Section */}
-                                <div style={{ marginBottom: '25px' }}>
-                                    <h4 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '15px', color: 'var(--bg-darker)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <Calendar size={18} /> Upcoming Events
-                                    </h4>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                        <EventItem time="4:00 PM" label="Meditation Session" />
-                                        <EventItem time="Tomorrow" label="Cancer Survivor Meet" />
+                        <AnimatePresence>
+                            {showEvents && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                                    className="glass-card"
+                                    style={{
+                                        position: 'absolute',
+                                        top: '65px',
+                                        right: '-60px',
+                                        width: '380px',
+                                        padding: '25px',
+                                        zIndex: 1000,
+                                        textAlign: 'left',
+                                        cursor: 'default',
+                                        background: isDarkMode ? 'var(--card-bg)' : 'white',
+                                        boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+                                        borderRadius: '24px'
+                                    }}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <div style={{ marginBottom: '25px' }}>
+                                        <h4 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '15px', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <Calendar size={18} /> Upcoming Events
+                                        </h4>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                            <EventItem time="4:00 PM" label="Meditation Session" />
+                                            <EventItem time="Tomorrow" label="Cancer Survivor Meet" />
+                                        </div>
                                     </div>
-                                </div>
 
-                                {/* Daily Reminder Section */}
-                                <div>
-                                    <h4 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '10px', color: 'var(--bg-darker)' }}>Daily Reminder</h4>
-                                    <div style={{
-                                        background: 'linear-gradient(135deg, rgba(109, 40, 217, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%)',
-                                        padding: '15px',
-                                        borderRadius: '12px',
-                                        border: '1px solid rgba(167, 139, 250, 0.2)'
-                                    }}>
-                                        <p style={{ color: 'var(--text-main)', fontSize: '15px', lineHeight: '1.6', fontStyle: 'italic', fontWeight: '500' }}>
-                                            "Your illness doesn't define you. Your strength and resilience do. Take a deep breath."
-                                        </p>
+                                    <div>
+                                        <h4 style={{ fontSize: '14px', fontWeight: '800', marginBottom: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Daily Reminder</h4>
+                                        <div style={{
+                                            background: 'linear-gradient(135deg, rgba(109, 40, 217, 0.08) 0%, rgba(236, 72, 153, 0.08) 100%)',
+                                            padding: '20px',
+                                            borderRadius: '16px',
+                                            border: '1px solid rgba(167, 139, 250, 0.2)'
+                                        }}>
+                                            <p style={{ color: 'var(--text-main)', fontSize: '15px', lineHeight: '1.6', fontStyle: 'italic', fontWeight: '600' }}>
+                                                "Your illness doesn't define you. Your strength and resilience do. Take a deep breath."
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
 
-                    {/* Notifications */}
                     <div style={{ position: 'relative' }} ref={notificationRef}>
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() => setShowNotifications(!showNotifications)}
                             style={{
                                 background: 'white',
@@ -324,49 +365,66 @@ export default function Dashboard() {
                                 color: 'var(--bg-darker)',
                                 boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                                 position: 'relative',
-                                transition: 'all 0.2s ease'
                             }}
                         >
                             <Bell size={24} />
-                            <span style={{ position: 'absolute', top: '12px', right: '14px', width: '8px', height: '8px', background: '#EF4444', borderRadius: '50%' }}></span>
-                        </button>
+                            <motion.span
+                                animate={{ scale: [1, 1.2, 1] }}
+                                transition={{ repeat: Infinity, duration: 2 }}
+                                style={{ position: 'absolute', top: '12px', right: '14px', width: '8px', height: '8px', background: '#EF4444', borderRadius: '50%' }}
+                            ></motion.span>
+                        </motion.button>
 
-                        {showNotifications && (
-                            <div className="glass-card" style={{
-                                position: 'absolute',
-                                top: '65px',
-                                right: '0',
-                                width: '320px',
-                                padding: '20px',
-                                zIndex: 1000,
-                                textAlign: 'left',
-                                cursor: 'default',
-                                background: 'white',
-                                boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
-                            }} onClick={(e) => e.stopPropagation()}>
-                                <h4 style={{ margin: '0 0 15px', fontSize: '18px', fontWeight: '800', color: 'var(--bg-darker)' }}>Notifications</h4>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                    {notifications.map(n => (
-                                        <div key={n.id} style={{
-                                            padding: '12px',
-                                            borderRadius: '12px',
-                                            background: n.read ? 'transparent' : 'rgba(109, 40, 217, 0.05)',
-                                            border: '1px solid rgba(109, 40, 217, 0.1)'
-                                        }}>
-                                            <div style={{ fontSize: '15px', fontWeight: '700', color: 'var(--bg-darker)', marginBottom: '4px' }}>{n.title}</div>
-                                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{n.time}</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                        <AnimatePresence>
+                            {showNotifications && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                                    className="glass-card"
+                                    style={{
+                                        position: 'absolute',
+                                        top: '65px',
+                                        right: '0',
+                                        width: '320px',
+                                        padding: '20px',
+                                        zIndex: 1000,
+                                        textAlign: 'left',
+                                        cursor: 'default',
+                                        background: isDarkMode ? 'var(--card-bg)' : 'white',
+                                        boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+                                        borderRadius: '24px'
+                                    }}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <h4 style={{ margin: '0 0 15px', fontSize: '18px', fontWeight: '800', color: 'var(--text-main)' }}>Notifications</h4>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                        {notifications.map(n => (
+                                            <motion.div
+                                                key={n.id}
+                                                whileHover={{ x: 3 }}
+                                                style={{
+                                                    padding: '12px',
+                                                    borderRadius: '12px',
+                                                    background: n.read ? 'transparent' : 'rgba(109, 40, 217, 0.05)',
+                                                    border: '1px solid rgba(109, 40, 217, 0.1)'
+                                                }}
+                                            >
+                                                <div style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-main)', marginBottom: '4px' }}>{n.title}</div>
+                                                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{n.time}</div>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
                 </div>
-            </div>
-
+            </motion.div>
 
             {/* Welcome Banner Desktop */}
             <motion.div
+                variants={itemVariants}
                 className="welcome-banner-responsive"
                 whileHover={{
                     boxShadow: '0 30px 60px rgba(109, 40, 217, 0.15)',
@@ -374,24 +432,32 @@ export default function Dashboard() {
                 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
             >
-                {/* Left Side: Content Box */}
-                {/* Left Side: Content Box */}
                 <div className="welcome-content">
-                    <div style={{ background: 'rgba(109, 40, 217, 0.1)', color: 'var(--primary)', padding: '6px 15px', borderRadius: '20px', display: 'inline-block', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', marginBottom: '20px', letterSpacing: '0.5px', width: 'fit-content' }}>
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.5 }}
+                        style={{ background: 'rgba(109, 40, 217, 0.1)', color: 'var(--primary)', padding: '6px 15px', borderRadius: '20px', display: 'inline-block', fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', marginBottom: '20px', letterSpacing: '0.5px', width: 'fit-content' }}
+                    >
                         NEW CONTENT AVAILABLE
-                    </div>
+                    </motion.div>
                     <h2 style={{ fontSize: '42px', fontWeight: '900', marginBottom: '15px', color: 'var(--bg-darker)', lineHeight: '1.2' }}>Welcome back to Sneha!</h2>
                     <p style={{ fontSize: '18px', opacity: 0.8, lineHeight: '1.6', marginBottom: '30px', color: 'var(--bg-darker)' }}>
                         We've added new guided meditations and support groups tailored for your
                         <span style={{ fontWeight: '800', color: 'var(--primary)' }}> {user?.supportType || 'wellness'}</span>.
                         Explore them now to stay resilient.
                     </p>
-                    <button onClick={() => navigate('/wellness')} className="btn btn-primary" style={{ fontWeight: '800', padding: '14px 35px', width: 'fit-content', boxShadow: '0 10px 20px rgba(109, 40, 217, 0.2)' }}>
+                    <motion.button
+                        whileHover={{ scale: 1.05, x: 5 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => navigate('/wellness')}
+                        className="btn btn-primary"
+                        style={{ fontWeight: '800', padding: '14px 35px', width: 'fit-content', boxShadow: '0 10px 20px rgba(109, 40, 217, 0.2)' }}
+                    >
                         Explore Wellness
-                    </button>
+                    </motion.button>
                 </div>
 
-                {/* Right Side: Mascot Box */}
                 <div className="welcome-mascot">
                     <motion.video
                         src={doctorMascot}
@@ -400,10 +466,10 @@ export default function Dashboard() {
                         muted
                         playsInline
                         animate={{
-                            y: [0, -10, 0],
+                            y: [0, -15, 0],
                         }}
                         transition={{
-                            duration: 4,
+                            duration: 5,
                             repeat: Infinity,
                             ease: "easeInOut"
                         }}
@@ -414,7 +480,7 @@ export default function Dashboard() {
                             position: 'relative',
                             zIndex: 1,
                             mixBlendMode: 'multiply',
-                            filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.05))',
+                            filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.1))',
                             maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
                             WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)'
                         }}
@@ -423,11 +489,15 @@ export default function Dashboard() {
             </motion.div>
 
             {/* Content Section - Full Width */}
-            <div style={{ paddingBottom: '40px' }}>
-                <h3 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '25px', color: 'var(--bg-darker)' }}>
+            <motion.div variants={itemVariants} style={{ paddingBottom: '40px' }}>
+                <h3 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '25px', color: 'var(--text-main)' }}>
                     Recommended for You
                 </h3>
-                <div className="pref-grid-desktop" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+                <motion.div
+                    variants={containerVariants}
+                    className="pref-grid-desktop"
+                    style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}
+                >
                     {filteredFeatures.length > 0 ? (
                         filteredFeatures.map((item, index) => (
                             <PreferenceCard
@@ -444,42 +514,60 @@ export default function Dashboard() {
                             No results found for "{searchTerm}".
                         </div>
                     )}
-                </div>
-            </div>
-
-        </div >
+                </motion.div>
+            </motion.div>
+        </motion.div >
     );
 }
 
 function PreferenceCard({ title, icon, desc, color, onClick }) {
     return (
-        <div className="desktop-card" onClick={onClick}>
-            <div style={{
-                width: '60px',
-                height: '60px',
-                background: `${color}15`,
-                borderRadius: '15px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: color,
-                margin: '0 auto 20px'
-            }}>
+        <motion.div
+            whileHover={{
+                y: -10,
+                boxShadow: `0 20px 40px ${color}20`,
+                borderColor: `${color}40`
+            }}
+            whileTap={{ scale: 0.98 }}
+            className="desktop-card"
+            onClick={onClick}
+            style={{
+                transition: 'border-color 0.3s ease'
+            }}
+        >
+            <motion.div
+                whileHover={{ rotate: 15, scale: 1.1 }}
+                style={{
+                    width: '60px',
+                    height: '60px',
+                    background: `${color}15`,
+                    borderRadius: '18px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: color,
+                    margin: '0 auto 20px'
+                }}
+            >
                 {icon}
-            </div>
-            <h4 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '10px' }}>{title}</h4>
+            </motion.div>
+            <h4 style={{ fontSize: '20px', fontWeight: '800', marginBottom: '10px', color: 'var(--text-main)' }}>{title}</h4>
             <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: '1.4' }}>{desc}</p>
-        </div>
+        </motion.div>
     );
 }
 
 function EventItem({ time, label }) {
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #F3F4F6' }}>
-            <span style={{ fontWeight: '700', fontSize: '16px', color: 'var(--primary)' }}>{time}</span>
-            <span style={{ fontSize: '16px', fontWeight: '500' }}>{label}</span>
-        </div>
+        <motion.div
+            whileHover={{ x: 5 }}
+            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}
+        >
+            <span style={{ fontWeight: '800', fontSize: '15px', color: 'var(--primary)' }}>{time}</span>
+            <span style={{ fontSize: '15px', fontWeight: '600', color: 'var(--text-main)' }}>{label}</span>
+        </motion.div>
     );
 }
+
 
 

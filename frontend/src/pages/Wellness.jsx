@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Heart, Search, Video, Wind } from 'lucide-react';
+import { Play, Pause, Heart, Search, Video, Wind, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { wellnessService } from '../services/wellnessService';
 import MusicPlayerOverlay from '../components/wellness/MusicPlayerOverlay';
 import VideoPlayerOverlay from '../components/wellness/VideoPlayerOverlay';
 import natureImage from '../assets/nature_meditation.png';
+import BreathingOverlay from '../components/wellness/BreathingOverlay';
 
 const ASSET_MAP = {};
-
-import BreathingOverlay from '../components/wellness/BreathingOverlay';
 
 const BREATHING_EXERCISES = [
     {
@@ -103,12 +103,7 @@ export default function Wellness() {
 
     const loadContent = async () => {
         try {
-            const filterType = filter === 'all' || filter === 'breathing' ? null : filter; // Don't filter out breathing on backend if handled locally, but backend likely has no 'breathing' type yet
-            const data = await wellnessService.getWellnessContent(filterType === 'breathing' ? null : filterType); // If filter is breathing, maybe we shouldn't fetch audio? Or fetch all.
-            // Simplified:
             const fetchedData = await wellnessService.getWellnessContent(filter === 'breathing' ? 'all' : (filter === 'all' ? null : filter));
-            // Actually, if filter is 'breathing', we might not want backend data if it doesn't exist.
-            // But preserving existing logic:
             setContent(fetchedData || []);
 
             const favs = await wellnessService.getFavorites();
@@ -212,15 +207,49 @@ export default function Wellness() {
         item.description.toLowerCase().includes(searchQuery.toLowerCase())
     ) : [];
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { y: 20, opacity: 0 },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: {
+                duration: 0.5,
+                ease: "easeOut"
+            }
+        }
+    };
+
     return (
-        <div className="animate-fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+        <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+            className="animate-fade-in"
+        >
+            <motion.div
+                variants={itemVariants}
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}
+            >
                 <div>
-                    <h1 style={{ fontSize: '36px', fontWeight: '900', color: 'var(--bg-darker)' }}>Wellness Library</h1>
-                    <p style={{ color: '#6B7280', fontSize: '18px' }}>Explore curated content to support your mental and physical healing.</p>
+                    <h1 style={{ fontSize: '36px', fontWeight: '900', color: 'var(--text-main)' }}>Wellness Library</h1>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '18px' }}>Explore curated content to support your mental and physical healing.</p>
                 </div>
                 <div style={{ display: 'flex', gap: '15px' }}>
-                    <div className="search-input-wrapper" style={{ position: 'relative' }}>
+                    <motion.div
+                        whileFocus={{ scale: 1.02 }}
+                        className="search-input-wrapper"
+                        style={{ position: 'relative' }}
+                    >
                         <Search size={16} style={{ position: 'absolute', left: '15px', top: '12px', color: '#9CA3AF', zIndex: 1 }} />
                         <input
                             className="input"
@@ -229,41 +258,59 @@ export default function Wellness() {
                             onChange={(e) => setSearchQuery(e.target.value)}
                             style={{ width: '280px', height: '40px', paddingLeft: '40px', marginBottom: 0, position: 'relative', zIndex: 0, fontSize: '14px' }}
                         />
-                    </div>
+                        {searchQuery && (
+                            <button onClick={() => setSearchQuery('')} style={{ position: 'absolute', right: '10px', top: '10px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#A1A1AA' }}>
+                                <X size={16} />
+                            </button>
+                        )}
+                    </motion.div>
                 </div>
-            </div>
+            </motion.div>
 
             {!showPlayer && !showVideoPlayer && (
-                <div style={{
-                    display: 'flex',
-                    gap: '15px',
-                    marginBottom: '40px',
-                    marginTop: '30px',
-                    paddingTop: '15px',
-                    overflowX: 'auto',
-                    paddingBottom: '15px'
-                }}>
+                <motion.div
+                    variants={itemVariants}
+                    style={{
+                        display: 'flex',
+                        gap: '15px',
+                        marginBottom: '40px',
+                        marginTop: '30px',
+                        paddingTop: '15px',
+                        overflowX: 'auto',
+                        paddingBottom: '15px',
+                        scrollbarWidth: 'none'
+                    }}
+                >
                     {filters.map((f) => (
-                        <button
+                        <motion.button
                             key={f.value}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setFilter(f.value)}
                             className={`filter-tab ${filter === f.value ? 'active' : ''}`}
                         >
                             {f.label}
-                        </button>
+                        </motion.button>
                     ))}
-                </div>
+                </motion.div>
             )}
 
             {loading ? (
                 <div style={{ textAlign: 'center', padding: '100px 0' }}>
-                    <div className="gradient-text" style={{ fontSize: '24px', fontWeight: '700' }}>Preparing your wellness space...</div>
+                    <motion.div
+                        animate={{ opacity: [0.5, 1, 0.5] }}
+                        transition={{ repeat: Infinity, duration: 2 }}
+                        className="gradient-text"
+                        style={{ fontSize: '24px', fontWeight: '700' }}
+                    >
+                        Preparing your wellness space...
+                    </motion.div>
                 </div>
             ) : (
-                <>
+                <motion.div variants={containerVariants}>
                     {/* Interactive Breathing Exercises */}
                     {(filter === 'all' || filter === 'breathing') && (
-                        <div style={{ marginBottom: '50px' }}>
+                        <motion.div variants={itemVariants} style={{ marginBottom: '50px' }}>
                             <div className="pref-grid-desktop">
                                 {BREATHING_EXERCISES.map((item) => (
                                     <BreathingCard
@@ -273,12 +320,12 @@ export default function Wellness() {
                                     />
                                 ))}
                             </div>
-                        </div>
+                        </motion.div>
                     )}
 
                     {/* Wellness Content Grid */}
                     {filter !== 'breathing' && (
-                        <div className="pref-grid-desktop">
+                        <motion.div variants={containerVariants} className="pref-grid-desktop">
                             {filteredContent.length > 0 ? (
                                 filteredContent.map((item) => (
                                     <WellnessCard
@@ -293,102 +340,128 @@ export default function Wellness() {
                                     />
                                 ))
                             ) : (
-                                <div style={{
-                                    gridColumn: '1 / -1',
-                                    textAlign: 'center',
-                                    padding: '60px 20px',
-                                    background: 'rgba(255, 255, 255, 0.5)',
-                                    borderRadius: '24px',
-                                    border: '1px dashed #E9D5FF'
-                                }}>
-                                    <h3 style={{ fontSize: '20px', fontWeight: '700', color: 'var(--bg-darker)', marginBottom: '10px' }}>No resources found</h3>
-                                    <p style={{ color: '#6B7280' }}>We couldn't find any items matching your search or category.</p>
-                                </div>
+                                <motion.div
+                                    variants={itemVariants}
+                                    style={{
+                                        gridColumn: '1 / -1',
+                                        textAlign: 'center',
+                                        padding: '60px 20px',
+                                        background: 'rgba(255, 255, 255, 0.5)',
+                                        borderRadius: '24px',
+                                        border: '1px dashed #E9D5FF'
+                                    }}
+                                >
+                                    <h3 style={{ fontSize: '20px', fontWeight: '700', color: 'var(--text-main)', marginBottom: '10px' }}>No resources found</h3>
+                                    <p style={{ color: 'var(--text-muted)' }}>We couldn't find any items matching your search or category.</p>
+                                </motion.div>
                             )}
-                        </div>
+                        </motion.div>
                     )}
-                </>
+                </motion.div>
             )}
 
-            {showPlayer && (
-                <MusicPlayerOverlay
-                    track={currentTrack}
-                    isPlaying={isPlaying}
-                    onTogglePlay={() => handlePlay(currentTrack)}
-                    onClose={() => setShowPlayer(false)}
-                    isFavorite={favorites.includes(currentTrack?.id)}
-                    onFavorite={() => handleFavorite(currentTrack?.id)}
-                    audioProgress={audioProgress}
-                    onSeek={handleSeek}
-                    duration={duration}
-                />
-            )}
+            <AnimatePresence>
+                {showPlayer && (
+                    <MusicPlayerOverlay
+                        track={currentTrack}
+                        isPlaying={isPlaying}
+                        onTogglePlay={() => handlePlay(currentTrack)}
+                        onClose={() => setShowPlayer(false)}
+                        isFavorite={favorites.includes(currentTrack?.id)}
+                        onFavorite={() => handleFavorite(currentTrack?.id)}
+                        audioProgress={audioProgress}
+                        onSeek={handleSeek}
+                        duration={duration}
+                    />
+                )}
+            </AnimatePresence>
 
-            {showVideoPlayer && (
-                <VideoPlayerOverlay
-                    track={currentTrack}
-                    onClose={() => setShowVideoPlayer(false)}
-                />
-            )}
+            <AnimatePresence>
+                {showVideoPlayer && (
+                    <VideoPlayerOverlay
+                        track={currentTrack}
+                        onClose={() => setShowVideoPlayer(false)}
+                    />
+                )}
+            </AnimatePresence>
 
-            {activeExercise && (
-                <BreathingOverlay
-                    exercise={activeExercise}
-                    onClose={() => setActiveExercise(null)}
-                />
-            )}
-        </div>
+            <AnimatePresence>
+                {activeExercise && (
+                    <BreathingOverlay
+                        exercise={activeExercise}
+                        onClose={() => setActiveExercise(null)}
+                    />
+                )}
+            </AnimatePresence>
+        </motion.div>
     );
 }
 
 function BreathingCard({ item, onClick }) {
     return (
-        <div onClick={onClick} className="glass-card wellness-card-hover" style={{
-            padding: '25px',
-            background: 'white',
-            borderRadius: '24px',
-            border: `1px solid ${item.color}30`,
-            cursor: 'pointer',
-            position: 'relative',
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            height: '100%',
-            transition: 'transform 0.2s, box-shadow 0.2s'
-        }}>
-            {/* Decorative background circle */}
-            <div style={{
-                position: 'absolute',
-                top: '-20px',
-                right: '-20px',
-                width: '100px',
-                height: '100px',
-                borderRadius: '50%',
-                background: item.color,
-                opacity: 0.1
-            }} />
+        <motion.div
+            variants={{
+                hidden: { y: 20, opacity: 0 },
+                visible: { y: 0, opacity: 1 }
+            }}
+            whileHover={{ y: -10, boxShadow: `0 20px 40px ${item.color}20` }}
+            whileTap={{ scale: 0.98 }}
+            onClick={onClick}
+            className="glass-card wellness-card-hover"
+            style={{
+                padding: '25px',
+                background: 'white',
+                borderRadius: '24px',
+                border: `1px solid ${item.color}30`,
+                cursor: 'pointer',
+                position: 'relative',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                height: '100%',
+                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+            }}
+        >
+            <motion.div
+                animate={{ scale: [1, 1.2, 1], rotate: [0, 5, 0] }}
+                transition={{ duration: 10, repeat: Infinity }}
+                style={{
+                    position: 'absolute',
+                    top: '-20px',
+                    right: '-20px',
+                    width: '100px',
+                    height: '100px',
+                    borderRadius: '50%',
+                    background: item.color,
+                    opacity: 0.1,
+                    filter: 'blur(10px)'
+                }}
+            />
 
             <div>
-                <div style={{
-                    width: '50px',
-                    height: '50px',
-                    borderRadius: '16px',
-                    background: `${item.color}20`,
-                    color: item.color,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '20px'
-                }}>
+                <motion.div
+                    whileHover={{ rotate: 10 }}
+                    style={{
+                        width: '50px',
+                        height: '50px',
+                        borderRadius: '16px',
+                        background: `${item.color}20`,
+                        color: item.color,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: '20px'
+                    }}
+                >
                     <Wind size={24} />
-                </div>
+                </motion.div>
 
-                <h3 style={{ fontSize: '20px', fontWeight: '800', color: 'var(--bg-darker)', marginBottom: '10px' }}>
+                <h3 style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '10px' }}>
                     {item.title}
                 </h3>
 
-                <p style={{ fontSize: '14px', color: '#64748B', lineHeight: '1.5', marginBottom: '20px' }}>
+                <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: '1.5', marginBottom: '20px' }}>
                     {item.description}
                 </p>
             </div>
@@ -405,23 +478,28 @@ function BreathingCard({ item, onClick }) {
                     {item.duration}
                 </span>
 
-                <button style={{
-                    background: item.color,
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '12px',
-                    padding: '10px 20px',
-                    fontSize: '14px',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px'
-                }}>
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    style={{
+                        background: item.color,
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '12px',
+                        padding: '10px 20px',
+                        fontSize: '14px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        boxShadow: `0 4px 12px ${item.color}30`
+                    }}
+                >
                     <Play size={14} fill="white" /> Start
-                </button>
+                </motion.button>
             </div>
-        </div>
+        </motion.div>
     );
 }
 
@@ -447,7 +525,12 @@ function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite, 
     };
 
     return (
-        <div
+        <motion.div
+            variants={{
+                hidden: { y: 20, opacity: 0 },
+                visible: { y: 0, opacity: 1 }
+            }}
+            whileHover={{ y: -10 }}
             className="desktop-card wellness-card-hover"
             onClick={onOpen}
             style={{
@@ -457,11 +540,11 @@ function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite, 
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
-                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                transition: 'border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                 cursor: 'pointer'
             }}
         >
-            <div style={{ height: '200px', background: 'var(--bg-darker)', position: 'relative' }}>
+            <div style={{ height: '180px', background: 'var(--bg-darker)', position: 'relative' }}>
                 <div style={{
                     position: 'absolute',
                     inset: 0,
@@ -473,33 +556,34 @@ function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite, 
                 <div style={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%)'
+                    background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6) 100%)'
                 }}></div>
 
                 <div style={{
                     position: 'absolute',
-                    top: '15px',
-                    left: '15px',
-                    background: isVideo ? 'rgba(239, 68, 68, 0.8)' : 'rgba(255,255,255,0.2)',
+                    top: '12px',
+                    left: '12px',
+                    background: isVideo ? 'rgba(239, 68, 68, 0.9)' : 'rgba(255,255,255,0.25)',
                     backdropFilter: 'blur(10px)',
-                    padding: '6px 14px',
+                    padding: '4px 10px',
                     borderRadius: '20px',
                     color: 'white',
                     fontSize: '10px',
                     fontWeight: '900',
                     textTransform: 'uppercase',
-                    letterSpacing: '1px',
+                    letterSpacing: '0.5px',
                     border: '1px solid rgba(255,255,255,0.3)',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '6px'
+                    gap: '4px'
                 }}>
                     {isVideo && <Video size={12} />}
-                    {item.type === 'breathing' && <Wind size={12} />}
                     {item.type}
                 </div>
 
-                <button
+                <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                     className="play-button-hover"
                     onClick={onPlay}
                     style={{
@@ -507,8 +591,8 @@ function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite, 
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        width: '60px',
-                        height: '60px',
+                        width: '56px',
+                        height: '56px',
                         borderRadius: '50%',
                         background: 'white',
                         border: 'none',
@@ -517,33 +601,35 @@ function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite, 
                         justifyContent: 'center',
                         color: 'var(--primary)',
                         cursor: 'pointer',
-                        boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
+                        boxShadow: '0 8px 20px rgba(0,0,0,0.3)',
+                        zIndex: 2
                     }}
                 >
-                    {isPaying ? <Pause fill="var(--primary)" size={24} /> : (isVideo ? <Play fill="#EF4444" size={24} /> : <Play fill="var(--primary)" size={24} />)}
-                </button>
+                    {isPaying ? <Pause fill="var(--primary)" size={22} /> : (isVideo ? <Play fill="#EF4444" size={22} /> : <Play fill="var(--primary)" size={22} />)}
+                </motion.button>
             </div>
 
-            <div style={{ padding: '25px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <h3 style={{ fontSize: '22px', fontWeight: '900', color: 'var(--bg-darker)', marginBottom: '10px' }}>{item.title}</h3>
-                <p style={{ fontSize: '15px', color: '#64748B', lineHeight: '1.6', marginBottom: 'auto', paddingBottom: '20px' }}>
+            <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px', lineHeight: '1.3' }}>{item.title}</h3>
+                <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: '1.5', marginBottom: 'auto', paddingBottom: '15px' }}>
                     {item.description}
                 </p>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '15px', borderTop: '1px solid #F1F5F9' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
                     <div style={{
-                        background: isVideo ? '#EF4444' : 'var(--primary)',
-                        color: 'white',
-                        padding: '6px 15px',
-                        borderRadius: '20px',
-                        fontSize: '13px',
+                        background: isVideo ? '#EF444415' : 'var(--primary-light)15',
+                        color: isVideo ? '#EF4444' : 'var(--primary)',
+                        padding: '4px 12px',
+                        borderRadius: '12px',
+                        fontSize: '12px',
                         fontWeight: '800',
-                        boxShadow: `0 4px 10px ${isVideo ? 'rgba(239, 68, 68, 0.2)' : 'rgba(109, 40, 217, 0.2)'}`
                     }}>
                         {item.duration || '5:00 min'}
                     </div>
 
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={(e) => {
                             e.stopPropagation();
                             onFavorite();
@@ -551,16 +637,17 @@ function WellnessCard({ item, isPaying, isFavorite, onPlay, onOpen, onFavorite, 
                         style={{
                             background: 'none',
                             border: 'none',
-                            color: isFavorite ? '#EF4444' : '#64748B',
+                            color: isFavorite ? '#EF4444' : '#9CA3AF',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center'
                         }}
                     >
-                        <Heart size={24} fill={isFavorite ? '#EF4444' : 'none'} />
-                    </button>
+                        <Heart size={20} fill={isFavorite ? '#EF4444' : 'none'} />
+                    </motion.button>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }
+

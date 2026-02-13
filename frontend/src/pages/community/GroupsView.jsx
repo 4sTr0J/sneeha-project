@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Search, MoreVertical, Megaphone, ChevronRight, Plus, Send, Smile } from 'lucide-react';
 import { communityService } from '../../services/communityService';
 
@@ -8,7 +9,6 @@ export default function GroupsView() {
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
-    const [isSearching, setIsSearching] = useState(false);
     const [selectedCommunity, setSelectedCommunity] = useState(null);
     const [messageInput, setMessageInput] = useState('');
 
@@ -20,7 +20,6 @@ export default function GroupsView() {
         try {
             const data = await communityService.getGroups();
             setGroups(data || []);
-            // Auto-select first community
             if (data && data.length > 0) {
                 setSelectedCommunity(data[0]);
             }
@@ -31,7 +30,6 @@ export default function GroupsView() {
         }
     };
 
-    // Mock chat messages - using community names as keys for better matching
     const getMockMessages = (communityName) => {
         const messagesMap = {
             "Healing Community '25": [
@@ -84,7 +82,6 @@ export default function GroupsView() {
 
     const handleSendMessage = () => {
         if (messageInput.trim()) {
-            // TODO: Implement actual message sending
             console.log('Sending message:', messageInput);
             setMessageInput('');
         }
@@ -94,23 +91,40 @@ export default function GroupsView() {
         g.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.05
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, x: -20 },
+        visible: {
+            opacity: 1,
+            x: 0,
+            transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+        }
+    };
+
     return (
-        <div style={{
-            display: 'flex',
-            position: 'fixed',
-            top: '160px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 'calc(100% - 40px)',
-            maxWidth: '1400px',
-            height: 'calc(100vh - 140px)',
-            background: 'var(--page-bg)',
-            zIndex: 100,
-            borderRadius: '20px',
-            overflow: 'hidden',
-            boxShadow: '0 10px 40px rgba(109, 40, 217, 0.1)',
-            border: '1px solid rgba(109, 40, 217, 0.1)'
-        }}>
+        <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+                display: 'flex',
+                height: 'calc(100vh - 180px)',
+                background: 'var(--card-bg)',
+                borderRadius: '32px',
+                overflow: 'hidden',
+                border: '1px solid var(--input-bg)',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.03)'
+            }}
+        >
             {/* LEFT PANEL - Communities List */}
             <div style={{
                 width: '400px',
@@ -121,36 +135,44 @@ export default function GroupsView() {
             }}>
                 {/* Header with Search */}
                 <div style={{
-                    padding: '20px',
+                    padding: '16px 24px',
                     borderBottom: '1px solid var(--input-bg)',
                 }}>
-                    <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#6D28D9', margin: '0 0 16px 0' }}>Communities</h2>
+                    <h2 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--primary)', margin: '0 0 12px 0' }}>Communities</h2>
 
                     {/* Search Bar */}
-                    <div style={{ position: 'relative' }}>
-                        <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF' }} />
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        style={{ position: 'relative' }}
+                    >
+                        <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                         <input
                             placeholder="Search communities..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             style={{
                                 width: '100%',
-                                padding: '10px 12px 10px 40px',
+                                padding: '14px 16px 14px 48px',
                                 border: '1px solid var(--input-bg)',
-                                borderRadius: '12px',
+                                borderRadius: '16px',
                                 background: 'var(--input-bg)',
-                                fontSize: '14px',
-                                outline: 'none'
+                                fontSize: '15px',
+                                outline: 'none',
+                                transition: 'all 0.3s'
                             }}
+                            className="focus-ring"
                         />
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* New Community Button */}
-                <div
-                    className="interactive-row"
+                <motion.div
+                    whileHover={{ background: 'rgba(109, 40, 217, 0.05)' }}
+                    whileTap={{ scale: 0.98 }}
                     style={{
-                        padding: '16px 20px',
+                        padding: '12px 24px',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '16px',
@@ -160,34 +182,45 @@ export default function GroupsView() {
                     }}
                     onClick={() => alert('Feature coming soon!')}
                 >
-                    <div style={{
-                        width: '48px',
-                        height: '48px',
-                        background: 'var(--primary)',
-                        borderRadius: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}>
+                    <motion.div
+                        whileHover={{ rotate: 90 }}
+                        style={{
+                            width: '48px',
+                            height: '48px',
+                            background: 'var(--primary)',
+                            borderRadius: '14px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 8px 16px rgba(109, 40, 217, 0.2)'
+                        }}
+                    >
                         <Plus size={24} color="#fff" />
-                    </div>
-                    <span style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-main)' }}>New community</span>
-                </div>
+                    </motion.div>
+                    <span style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text-main)' }}>New community</span>
+                </motion.div>
 
                 {/* Communities List */}
-                <div style={{ flex: 1, overflowY: 'auto' }}>
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                    style={{ flex: 1, overflowY: 'auto' }}
+                >
                     {loading ? (
-                        <div style={{ textAlign: 'center', padding: '40px' }}>
-                            <p style={{ color: '#666' }}>Loading communities...</p>
+                        <div style={{ textAlign: 'center', padding: '60px' }}>
+                            <div className="loader" style={{ margin: '0 auto 20px' }}></div>
+                            <p style={{ color: 'var(--text-muted)' }}>Loading communities...</p>
                         </div>
                     ) : (
                         filteredGroups.map((group) => (
-                            <div
+                            <motion.div
                                 key={group.id}
-                                className="interactive-row"
+                                variants={itemVariants}
+                                whileHover={{ background: 'rgba(109, 40, 217, 0.03)' }}
                                 onClick={() => setSelectedCommunity(group)}
                                 style={{
-                                    padding: '16px 20px',
+                                    padding: '14px 24px',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '16px',
@@ -198,22 +231,22 @@ export default function GroupsView() {
                                 }}
                             >
                                 <div style={{
-                                    width: '48px',
-                                    height: '48px',
-                                    background: '#56247E20',
-                                    borderRadius: '12px',
+                                    width: '52px',
+                                    height: '52px',
+                                    background: 'rgba(139, 92, 246, 0.1)',
+                                    borderRadius: '16px',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     flexShrink: 0
                                 }}>
-                                    <Users size={24} color="#56247E" />
+                                    <Users size={26} color="var(--primary)" />
                                 </div>
                                 <div style={{ flex: 1, overflow: 'hidden' }}>
-                                    <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1F2937', margin: '0 0 4px 0' }}>{group.name}</h3>
+                                    <h3 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text-main)', margin: '0 0 4px 0' }}>{group.name}</h3>
                                     <p style={{
                                         fontSize: '14px',
-                                        color: '#6B7280',
+                                        color: 'var(--text-muted)',
                                         margin: 0,
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',
@@ -222,13 +255,13 @@ export default function GroupsView() {
                                         {(() => { const msgs = getMockMessages(group.name); return msgs[msgs.length - 1]?.message || 'No messages yet'; })()}
                                     </p>
                                 </div>
-                                <span style={{ fontSize: '12px', color: '#9CA3AF', flexShrink: 0 }}>
+                                <span style={{ fontSize: '12px', color: 'var(--text-muted)', flexShrink: 0, fontWeight: '600' }}>
                                     {group.id === 'group-1' ? '11:20 AM' : 'Yesterday'}
                                 </span>
-                            </div>
+                            </motion.div>
                         ))
                     )}
-                </div>
+                </motion.div>
             </div>
 
             {/* RIGHT PANEL - Chat Messages */}
@@ -236,169 +269,224 @@ export default function GroupsView() {
                 flex: 1,
                 display: 'flex',
                 flexDirection: 'column',
-                background: '#F8F9FE'
+                background: 'var(--page-bg)'
             }}>
-                {selectedCommunity ? (
-                    <>
-                        {/* Chat Header */}
-                        <div style={{
-                            padding: '20px 30px',
-                            background: 'var(--card-bg)',
-                            borderBottom: '1px solid var(--input-bg)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between'
-                        }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                <div style={{
-                                    width: '48px',
-                                    height: '48px',
-                                    background: '#56247E20',
-                                    borderRadius: '12px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}>
-                                    <Users size={24} color="#56247E" />
-                                </div>
-                                <div>
-                                    <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#1F2937', margin: 0 }}>{selectedCommunity.name}</h2>
-                                    <p style={{ fontSize: '14px', color: '#6B7280', margin: 0 }}>
-                                        {selectedCommunity.memberCount || 256} members
-                                    </p>
-                                </div>
-                            </div>
-                            <div style={{ display: 'flex', gap: '16px', color: 'var(--primary)' }}>
-                                <Search size={22} style={{ cursor: 'pointer' }} />
-                                <MoreVertical size={22} style={{ cursor: 'pointer' }} />
-                            </div>
-                        </div>
-
-                        {/* Messages Area */}
-                        <div style={{
-                            flex: 1,
-                            overflowY: 'auto',
-                            padding: '30px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '16px'
-                        }}>
-                            {getMockMessages(selectedCommunity.name)?.map((msg) => (
-                                <div key={msg.id} style={{
-                                    display: 'flex',
-                                    justifyContent: msg.isOwn ? 'flex-end' : 'flex-start',
-                                    gap: '12px'
-                                }}>
-                                    {!msg.isOwn && (
-                                        <div style={{
-                                            width: '36px',
-                                            height: '36px',
-                                            background: msg.sender.color,
-                                            borderRadius: '50%',
+                <AnimatePresence mode="wait">
+                    {selectedCommunity ? (
+                        <motion.div
+                            key={selectedCommunity.id}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                            style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
+                        >
+                            {/* Chat Header */}
+                            <div style={{
+                                padding: '12px 32px',
+                                background: 'var(--card-bg)',
+                                borderBottom: '1px solid var(--input-bg)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                    <motion.div
+                                        initial={{ scale: 0.8 }}
+                                        animate={{ scale: 1 }}
+                                        style={{
+                                            width: '52px',
+                                            height: '52px',
+                                            background: 'rgba(139, 92, 246, 0.1)',
+                                            borderRadius: '16px',
                                             display: 'flex',
                                             alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: 'white',
-                                            fontSize: '12px',
-                                            fontWeight: '700',
-                                            flexShrink: 0
-                                        }}>
-                                            {msg.sender.avatar}
-                                        </div>
-                                    )}
-                                    <div style={{ maxWidth: '60%' }}>
-                                        {!msg.isOwn && (
-                                            <div style={{ fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '4px' }}>
-                                                {msg.sender.name}
-                                            </div>
-                                        )}
-                                        <div style={{
-                                            padding: '12px 16px',
-                                            borderRadius: '16px',
-                                            background: msg.isOwn ? 'var(--primary)' : 'white',
-                                            color: msg.isOwn ? 'white' : '#1F2937',
-                                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                                            fontSize: '15px',
-                                            lineHeight: '1.5'
-                                        }}>
-                                            {msg.message}
-                                        </div>
-                                        <div style={{
-                                            fontSize: '12px',
-                                            color: 'var(--text-muted)',
-                                            marginTop: '4px',
-                                            textAlign: msg.isOwn ? 'right' : 'left'
-                                        }}>
-                                            {msg.timestamp}
-                                        </div>
+                                            justifyContent: 'center'
+                                        }}
+                                    >
+                                        <Users size={28} color="var(--primary)" />
+                                    </motion.div>
+                                    <div>
+                                        <h2 style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>{selectedCommunity.name}</h2>
+                                        <p style={{ fontSize: '14px', color: 'var(--text-muted)', margin: 0 }}>
+                                            {selectedCommunity.memberCount || 256} members
+                                        </p>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
+                                <div style={{ display: 'flex', gap: '20px', color: 'var(--primary)' }}>
+                                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                        <Search size={24} style={{ cursor: 'pointer' }} />
+                                    </motion.div>
+                                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                        <MoreVertical size={24} style={{ cursor: 'pointer' }} />
+                                    </motion.div>
+                                </div>
+                            </div>
 
-                        {/* Message Input */}
-                        <div style={{
-                            padding: '20px 30px',
-                            background: 'var(--card-bg)',
-                            borderTop: '1px solid var(--input-bg)',
-                            display: 'flex',
-                            gap: '12px',
-                            alignItems: 'center'
-                        }}>
-                            <Smile size={24} color="var(--primary)" style={{ cursor: 'pointer', flexShrink: 0 }} />
-                            <input
-                                placeholder="Type a message..."
-                                value={messageInput}
-                                onChange={(e) => setMessageInput(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                            {/* Messages Area */}
+                            <div style={{
+                                flex: 1,
+                                overflowY: 'auto',
+                                padding: '20px 32px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '14px'
+                            }}>
+                                <AnimatePresence initial={false}>
+                                    {getMockMessages(selectedCommunity.name)?.map((msg, idx) => (
+                                        <motion.div
+                                            key={msg.id}
+                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            transition={{ delay: idx * 0.05 }}
+                                            style={{
+                                                display: 'flex',
+                                                justifyContent: msg.isOwn ? 'flex-end' : 'flex-start',
+                                                gap: '14px'
+                                            }}
+                                        >
+                                            {!msg.isOwn && (
+                                                <motion.div
+                                                    whileHover={{ scale: 1.1 }}
+                                                    style={{
+                                                        width: '40px',
+                                                        height: '40px',
+                                                        background: msg.sender.color,
+                                                        borderRadius: '14px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        color: 'white',
+                                                        fontSize: '13px',
+                                                        fontWeight: '800',
+                                                        flexShrink: 0,
+                                                        boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+                                                    }}
+                                                >
+                                                    {msg.sender.avatar}
+                                                </motion.div>
+                                            )}
+                                            <div style={{ maxWidth: '65%' }}>
+                                                {!msg.isOwn && (
+                                                    <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main)', marginBottom: '6px', marginLeft: '2px' }}>
+                                                        {msg.sender.name}
+                                                    </div>
+                                                )}
+                                                <motion.div
+                                                    layout
+                                                    style={{
+                                                        padding: '10px 16px',
+                                                        borderRadius: msg.isOwn ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                                                        background: msg.isOwn ? 'var(--primary)' : 'var(--card-bg)',
+                                                        color: msg.isOwn ? 'white' : 'var(--text-main)',
+                                                        boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                                                        fontSize: '15px',
+                                                        lineHeight: '1.5',
+                                                        border: msg.isOwn ? 'none' : '1px solid var(--input-bg)'
+                                                    }}
+                                                >
+                                                    {msg.message}
+                                                </motion.div>
+                                                <div style={{
+                                                    fontSize: '11px',
+                                                    color: 'var(--text-muted)',
+                                                    marginTop: '6px',
+                                                    textAlign: msg.isOwn ? 'right' : 'left',
+                                                    fontWeight: '600'
+                                                }}>
+                                                    {msg.timestamp}
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </AnimatePresence>
+                            </div>
+
+                            {/* Message Input */}
+                            <motion.div
+                                initial={{ y: 20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
                                 style={{
-                                    flex: 1,
-                                    padding: '14px 18px',
-                                    border: '1px solid var(--input-bg)',
-                                    borderRadius: '12px',
-                                    background: 'var(--input-bg)',
-                                    fontSize: '15px',
-                                    outline: 'none'
-                                }}
-                            />
-                            <button
-                                onClick={handleSendMessage}
-                                style={{
-                                    width: '48px',
-                                    height: '48px',
-                                    background: 'var(--primary)',
-                                    border: 'none',
-                                    borderRadius: '12px',
+                                    padding: '24px 32px',
+                                    background: 'var(--card-bg)',
+                                    borderTop: '1px solid var(--input-bg)',
                                     display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s',
-                                    flexShrink: 0
+                                    gap: '16px',
+                                    alignItems: 'center'
                                 }}
-                                onMouseOver={(e) => e.currentTarget.style.background = 'var(--primary-light)'}
-                                onMouseOut={(e) => e.currentTarget.style.background = 'var(--primary)'}
                             >
-                                <Send size={20} color="white" />
-                            </button>
-                        </div>
-                    </>
-                ) : (
-                    <div style={{
-                        flex: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'var(--text-muted)'
-                    }}>
-                        <div style={{ textAlign: 'center' }}>
-                            <Users size={64} color="var(--primary)" style={{ opacity: 0.3, marginBottom: '16px' }} />
-                            <h3 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '8px' }}>Select a community</h3>
-                            <p>Choose a community from the list to start chatting</p>
-                        </div>
-                    </div>
-                )}
+                                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                    <Smile size={26} color="var(--primary)" style={{ cursor: 'pointer', flexShrink: 0 }} />
+                                </motion.div>
+                                <input
+                                    placeholder="Type a message..."
+                                    value={messageInput}
+                                    onChange={(e) => setMessageInput(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                                    style={{
+                                        flex: 1,
+                                        padding: '16px 20px',
+                                        border: '1px solid var(--input-bg)',
+                                        borderRadius: '16px',
+                                        background: 'var(--input-bg)',
+                                        fontSize: '15px',
+                                        outline: 'none',
+                                        transition: 'all 0.3s'
+                                    }}
+                                    className="focus-ring"
+                                />
+                                <motion.button
+                                    whileHover={{ scale: 1.05, background: 'var(--primary-light)' }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={handleSendMessage}
+                                    style={{
+                                        width: '52px',
+                                        height: '52px',
+                                        background: 'var(--primary)',
+                                        border: 'none',
+                                        borderRadius: '16px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s',
+                                        flexShrink: 0,
+                                        boxShadow: '0 8px 16px rgba(109, 40, 217, 0.2)'
+                                    }}
+                                >
+                                    <Send size={22} color="white" />
+                                </motion.button>
+                            </motion.div>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key="empty"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            style={{
+                                flex: 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'var(--text-muted)'
+                            }}
+                        >
+                            <div style={{ textAlign: 'center' }}>
+                                <motion.div
+                                    animate={{ y: [0, -10, 0] }}
+                                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                                >
+                                    <Users size={80} color="var(--primary)" style={{ opacity: 0.2, marginBottom: '24px' }} />
+                                </motion.div>
+                                <h3 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '12px', color: 'var(--text-main)' }}>Select a community</h3>
+                                <p style={{ fontSize: '16px' }}>Choose a community from the list to start chatting</p>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
-        </div>
+        </motion.div>
     );
 }
+

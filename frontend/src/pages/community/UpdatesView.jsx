@@ -1,5 +1,6 @@
 import React from 'react';
-import { Search, MoreVertical, Camera, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Search, MoreVertical, Camera, ChevronRight, Plus } from 'lucide-react';
 import updateYoga from '../../assets/update_yoga.png';
 import updateLungs from '../../assets/update_lungs.png';
 import updateAyurveda from '../../assets/update_ayurveda.png';
@@ -22,130 +23,210 @@ export default function UpdatesView() {
         { id: 2, name: "Support Community", lastUpdate: "2h ago", text: "Join our live session today at 6 PM.", icon: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=100" },
     ];
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { y: 20, opacity: 0 },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: {
+                duration: 0.5,
+                ease: "easeOut"
+            }
+        }
+    };
+
     return (
-        <div style={{ maxWidth: '600px', margin: '0 auto', background: 'var(--bg-main)', minHeight: '100vh', padding: '20px 0 100px', position: 'relative' }}>
+        <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+            style={{
+                background: 'var(--card-bg)',
+                borderRadius: '32px',
+                padding: '24px',
+                minHeight: 'calc(100vh - 200px)',
+                border: '1px solid var(--input-bg)',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.03)'
+            }}
+        >
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px', marginBottom: '30px' }}>
-                <h1 style={{ fontSize: '24px', fontWeight: '800', color: 'var(--primary)' }}>Updates</h1>
-                <div style={{ display: 'flex', gap: '20px', color: 'var(--text-main)' }}>
-                    <Camera size={22} style={{ cursor: 'pointer' }} />
-                    <Search size={22} style={{ cursor: 'pointer' }} />
-                    <MoreVertical size={22} style={{ cursor: 'pointer' }} />
+            <motion.div
+                variants={itemVariants}
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}
+            >
+                <div>
+                    <h1 style={{ fontSize: '32px', fontWeight: '800', color: 'var(--primary)', margin: 0 }}>Updates</h1>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '15px', fontWeight: '500', marginTop: '4px' }}>Stay informed with your community feed</p>
                 </div>
-            </div>
+                <div style={{ display: 'flex', gap: '32px', color: 'var(--text-main)' }}>
+                    <motion.div whileHover={{ scale: 1.1, color: 'var(--primary)' }} style={{ cursor: 'pointer' }}><Camera size={24} /></motion.div>
+                    <motion.div whileHover={{ scale: 1.1, color: 'var(--primary)' }} style={{ cursor: 'pointer' }}><Search size={24} /></motion.div>
+                    <motion.div whileHover={{ scale: 1.1, color: 'var(--primary)' }} style={{ cursor: 'pointer' }}><MoreVertical size={24} /></motion.div>
+                </div>
+            </motion.div>
 
             {/* Status Section */}
-            <div style={{ marginBottom: '40px' }}>
-                <h2 style={{ fontSize: '20px', fontWeight: '700', color: 'var(--text-main)', padding: '0 20px', marginBottom: '15px' }}>Status</h2>
-                <div style={{
-                    display: 'flex',
-                    gap: '12px',
-                    overflowX: 'auto',
-                    padding: '0 20px',
-                    scrollbarWidth: 'none',
-                    msOverflowStyle: 'none',
-                }} className="hide-scrollbar">
-                    {statuses.map(status => (
-                        <div key={status.id} style={{
-                            flex: '0 0 140px',
-                            height: '210px',
-                            borderRadius: '25px',
-                            overflow: 'hidden',
-                            position: 'relative',
-                            boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
-                            border: '1px solid rgba(255,255,255,0.1)'
-                        }}>
-                            <img src={status.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ marginBottom: '64px' }}>
+                <motion.h2
+                    variants={itemVariants}
+                    style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', marginBottom: '24px' }}
+                >
+                    Status
+                </motion.h2>
+                <motion.div
+                    variants={containerVariants}
+                    style={{
+                        display: 'flex',
+                        gap: '20px',
+                        overflowX: 'auto',
+                        padding: '10px 0 24px',
+                        scrollbarWidth: 'none',
+                        msOverflowStyle: 'none',
+                    }}
+                    className="hide-scrollbar"
+                >
+                    {statuses.map((status, idx) => (
+                        <motion.div
+                            key={status.id}
+                            variants={itemVariants}
+                            whileHover={{ y: -10, boxShadow: '0 12px 24px rgba(109, 40, 217, 0.15)' }}
+                            style={{
+                                flex: '0 0 180px',
+                                height: '260px',
+                                borderRadius: '28px',
+                                overflow: 'hidden',
+                                position: 'relative',
+                                cursor: 'pointer',
+                                border: '1px solid var(--input-bg)'
+                            }}
+                        >
+                            <img src={status.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} className="zoom-hover" />
 
                             <div style={{
                                 position: 'absolute',
-                                top: '12px',
-                                left: '12px',
-                                width: '44px',
-                                height: '44px',
+                                inset: 0,
+                                background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, transparent 40%, rgba(0,0,0,0.7) 100%)'
+                            }} />
+
+                            <div style={{
+                                position: 'absolute',
+                                top: '16px',
+                                left: '16px',
+                                padding: '2px',
                                 borderRadius: '50%',
-                                padding: '3px',
-                                background: status.isMine ? 'transparent' : '#22C55E', // Green ring for others
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
+                                border: status.isMine ? 'none' : '2px solid var(--primary)',
+                                background: status.isMine ? 'transparent' : 'rgba(255,255,255,0.2)',
+                                backdropFilter: 'blur(4px)'
                             }}>
                                 <div style={{ position: 'relative' }}>
-                                    <img src={status.avatar} alt="" style={{ width: '38px', height: '38px', borderRadius: '50%', border: '2px solid black' }} />
+                                    <img src={status.avatar} alt="" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid white' }} />
                                     {status.isMine && (
-                                        <div style={{
-                                            position: 'absolute',
-                                            bottom: '-2px',
-                                            right: '-2px',
-                                            background: '#22C55E',
-                                            borderRadius: '50%',
-                                            width: '16px',
-                                            height: '16px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            border: '2px solid black',
-                                            color: 'white',
-                                            fontSize: '11px',
-                                            fontWeight: '800'
-                                        }}>+</div>
+                                        <motion.div
+                                            whileHover={{ scale: 1.2 }}
+                                            style={{
+                                                position: 'absolute',
+                                                bottom: '0',
+                                                right: '0',
+                                                background: 'var(--primary)',
+                                                borderRadius: '50%',
+                                                width: '20px',
+                                                height: '20px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                border: '2px solid white',
+                                                color: 'white'
+                                            }}
+                                        >
+                                            <Plus size={14} strokeWidth={4} />
+                                        </motion.div>
                                     )}
                                 </div>
                             </div>
 
                             <div style={{
                                 position: 'absolute',
-                                bottom: '12px',
-                                left: '12px',
-                                right: '12px',
+                                bottom: '20px',
+                                left: '20px',
+                                right: '20px',
                                 color: 'white',
-                                fontSize: '15px',
+                                fontSize: '16px',
                                 fontWeight: '700',
-                                textShadow: '0 1px 6px rgba(0,0,0,0.9)',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
+                                textShadow: '0 2px 4px rgba(0,0,0,0.5)',
                             }}>
                                 {status.user}
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
             </div>
 
             {/* Channels Section */}
-            <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px', marginBottom: '20px' }}>
-                    <h2 style={{ fontSize: '20px', fontWeight: '700', color: 'var(--text-main)' }}>Channels</h2>
-                    <button style={{ background: 'transparent', border: 'none', color: '#22C55E', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        Explore <ChevronRight size={18} />
-                    </button>
+            <motion.div variants={itemVariants}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+                    <h2 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>Channels</h2>
+                    <motion.button
+                        whileHover={{ x: 5, color: 'var(--primary)' }}
+                        style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '15px' }}
+                    >
+                        Explore More <ChevronRight size={18} />
+                    </motion.button>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', padding: '0 10px' }}>
+                <motion.div
+                    variants={containerVariants}
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+                        gap: '20px'
+                    }}
+                >
                     {channels.map(channel => (
-                        <div key={channel.id} style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '15px',
-                            padding: '12px 10px',
-                            borderRadius: '15px',
-                            cursor: 'pointer'
-                        }} className="interactive-row">
-                            <img src={channel.icon} alt="" style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', background: 'white' }} />
-                            <div style={{ flex: 1, borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '12px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                    <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text-main)', margin: 0 }}>{channel.name}</h4>
-                                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{channel.lastUpdate}</span>
+                        <motion.div
+                            key={channel.id}
+                            variants={itemVariants}
+                            whileHover={{ x: 10, background: 'rgba(139, 92, 246, 0.03)' }}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '20px',
+                                padding: '24px',
+                                borderRadius: '24px',
+                                cursor: 'pointer',
+                                border: '1px solid var(--input-bg)',
+                                background: 'var(--page-bg)'
+                            }}
+                        >
+                            <div style={{ position: 'relative' }}>
+                                <img src={channel.icon} alt="" style={{ width: '72px', height: '72px', borderRadius: '22px', objectFit: 'cover', background: 'var(--card-bg)', border: '1px solid var(--input-bg)' }} />
+                                <div style={{ position: 'absolute', bottom: -5, right: -5, width: '24px', height: '24px', background: 'var(--primary)', borderRadius: '50%', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', border: '3px solid var(--card-bg)' }}>
+                                    <Plus size={14} strokeWidth={3} />
                                 </div>
-                                <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                    <h4 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-main)', margin: 0 }}>{channel.name}</h4>
+                                    <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '600' }}>{channel.lastUpdate}</span>
+                                </div>
+                                <p style={{ fontSize: '15px', color: 'var(--text-muted)', margin: 0, fontWeight: '500', lineHeight: '1.5' }}>
                                     {channel.text}
                                 </p>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
-            </div>
-        </div>
+                </motion.div>
+            </motion.div>
+        </motion.div>
     );
 }
+

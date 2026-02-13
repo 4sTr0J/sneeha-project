@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Search, MoreVertical, Edit, FileText, UserPlus, Filter, Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, MoreVertical, Edit, FileText, UserPlus, Filter, Check, MessageSquare } from 'lucide-react';
 
 export default function ChatsView() {
     const [isEditing, setIsEditing] = useState(false);
@@ -25,119 +26,192 @@ export default function ChatsView() {
         { id: 9, name: 'Madam Thilini TM', msg: 'Saloni onari & teni diyana (Kadawat...', time: '2:40 pm', unread: 58, img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop' },
     ];
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.05
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, x: -20 },
+        visible: {
+            opacity: 1,
+            x: 0,
+            transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+        }
+    };
+
     return (
-        <div style={{
-            display: 'flex',
-            height: 'calc(100vh - 140px)',
-            background: 'var(--card-bg)',
-            borderRadius: '20px',
-            overflow: 'hidden',
-            border: '1px solid var(--input-bg)'
-        }}>
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{
+                display: 'flex',
+                height: 'calc(100vh - 180px)',
+                background: 'var(--card-bg)',
+                borderRadius: '32px',
+                overflow: 'hidden',
+                border: '1px solid var(--input-bg)',
+                position: 'relative',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.03)'
+            }}
+        >
+            {/* Background Decorations */}
+            <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
+                <div className="blob-animate" style={{ position: 'absolute', top: '-10%', right: '-5%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(109, 40, 217, 0.05) 0%, transparent 70%)', borderRadius: '50%' }} />
+                <div className="blob-animate" style={{ position: 'absolute', bottom: '-10%', left: '30%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(139, 92, 246, 0.05) 0%, transparent 70%)', borderRadius: '50%', animationDelay: '-2s' }} />
+            </div>
+
             {/* Left Sidebar */}
             <div style={{
                 width: '400px',
                 borderRight: '1px solid var(--input-bg)',
                 display: 'flex',
                 flexDirection: 'column',
-                background: 'var(--card-bg)'
+                background: 'var(--card-bg)',
+                position: 'relative',
+                zIndex: 1
             }}>
                 {/* Header */}
                 <div style={{
-                    padding: '16px 20px',
+                    padding: '16px 24px',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center'
                 }}>
-                    <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--text-main)', margin: 0 }}>Chats</h2>
-                    <div style={{ display: 'flex', gap: '20px', color: 'var(--text-main)' }}>
-                        <div
+                    <h2 style={{ fontSize: '24px', fontWeight: '900', color: 'var(--text-main)', margin: 0 }}>Chats</h2>
+                    <div style={{ display: 'flex', gap: '16px', color: 'var(--text-main)' }}>
+                        <motion.button
+                            whileHover={{ scale: 1.1, background: 'rgba(109, 40, 217, 0.1)' }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() => setIsEditing(!isEditing)}
                             style={{
                                 cursor: 'pointer',
-                                color: isEditing ? 'var(--primary)' : 'inherit',
                                 background: isEditing ? 'rgba(109, 40, 217, 0.1)' : 'transparent',
-                                borderRadius: '8px',
-                                padding: '4px',
-                                transition: 'all 0.2s'
+                                color: isEditing ? 'var(--primary)' : 'inherit',
+                                borderRadius: '12px',
+                                width: '40px',
+                                height: '40px',
+                                border: 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
                             }}
                         >
-                            <Edit size={22} />
-                        </div>
-                        <MoreVertical size={22} style={{ cursor: 'pointer' }} />
+                            <Edit size={20} />
+                        </motion.button>
+                        <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >
+                            <MoreVertical size={20} />
+                        </motion.button>
                     </div>
                 </div>
 
                 {/* Search */}
-                {!isEditing && (
-                    <div style={{ padding: '0 20px 10px' }}>
-                        <div style={{
-                            background: 'var(--input-bg)',
-                            borderRadius: '20px',
-                            padding: '10px 15px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '10px'
-                        }}>
-                            <Search size={18} color="var(--text-muted)" />
-                            <input
-                                placeholder="Search or start a new chat"
-                                style={{
-                                    border: 'none',
-                                    background: 'transparent',
-                                    outline: 'none',
-                                    width: '100%',
-                                    fontSize: '15px',
-                                    color: 'var(--text-main)'
-                                }}
-                            />
-                        </div>
-                    </div>
-                )}
+                <AnimatePresence mode="wait">
+                    {!isEditing && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            style={{ padding: '0 24px 12px' }}
+                        >
+                            <div style={{
+                                background: 'var(--input-bg)',
+                                borderRadius: '16px',
+                                padding: '12px 18px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px',
+                                border: '1px solid transparent'
+                            }} className="focus-within-ring">
+                                <Search size={18} color="var(--text-muted)" />
+                                <input
+                                    placeholder="Search chats..."
+                                    style={{
+                                        border: 'none',
+                                        background: 'transparent',
+                                        outline: 'none',
+                                        width: '100%',
+                                        fontSize: '15px',
+                                        color: 'var(--text-main)'
+                                    }}
+                                />
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {/* Filters */}
                 {!isEditing && (
-                    <div style={{
-                        display: 'flex',
-                        gap: '8px',
-                        padding: '10px 20px',
-                        overflowX: 'auto',
-                        scrollbarWidth: 'none'
-                    }}>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        style={{
+                            display: 'flex',
+                            gap: '12px',
+                            padding: '0 24px 16px',
+                            overflowX: 'auto',
+                            scrollbarWidth: 'none'
+                        }}
+                        className="hide-scrollbar"
+                    >
                         <FilterToken label="All" active />
                         <FilterToken label="Unread" />
                         <FilterToken label="Favourites" />
                         <FilterToken label="Groups" />
-                    </div>
+                    </motion.div>
                 )}
 
                 {/* Editing Actions Bar */}
-                {isEditing && (
-                    <div style={{
-                        padding: '10px 20px',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        background: 'var(--input-bg)',
-                        margin: '0 20px 10px',
-                        borderRadius: '12px'
-                    }}>
-                        <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)' }}>
-                            {selectedChats.length} Selected
-                        </span>
-                        <div style={{ display: 'flex', gap: '15px' }}>
-                            <button style={{ border: 'none', background: 'none', color: '#EF4444', fontWeight: '600', cursor: 'pointer' }}>Delete</button>
-                            <button style={{ border: 'none', background: 'none', color: 'var(--primary)', fontWeight: '600', cursor: 'pointer' }}>Archive</button>
-                        </div>
-                    </div>
-                )}
+                <AnimatePresence>
+                    {isEditing && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            style={{
+                                padding: '16px 20px',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                background: 'var(--input-bg)',
+                                margin: '0 24px 24px',
+                                borderRadius: '16px',
+                                border: '1px solid rgba(109, 40, 217, 0.1)'
+                            }}
+                        >
+                            <span style={{ fontSize: '15px', fontWeight: '800', color: 'var(--text-main)' }}>
+                                {selectedChats.length} Selected
+                            </span>
+                            <div style={{ display: 'flex', gap: '16px' }}>
+                                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} style={{ border: 'none', background: 'none', color: '#EF4444', fontWeight: '800', cursor: 'pointer', fontSize: '14px' }}>Delete</motion.button>
+                                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} style={{ border: 'none', background: 'none', color: 'var(--primary)', fontWeight: '800', cursor: 'pointer', fontSize: '14px' }}>Archive</motion.button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {/* Chat List */}
-                <div style={{ flex: 1, overflowY: 'auto' }}>
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                    style={{ flex: 1, overflowY: 'auto' }}
+                    className="hide-scrollbar"
+                >
                     {chats.map(chat => (
-                        <div
+                        <motion.div
                             key={chat.id}
-                            className="interactive-row"
+                            variants={itemVariants}
+                            whileHover={{ background: 'rgba(109, 40, 217, 0.03)', x: 4 }}
                             onClick={() => {
                                 if (isEditing) {
                                     toggleSelection(chat.id);
@@ -145,42 +219,57 @@ export default function ChatsView() {
                             }}
                             style={{
                                 display: 'flex',
-                                gap: '15px',
-                                padding: '12px 20px',
+                                gap: '16px',
+                                padding: '12px 24px',
                                 cursor: 'pointer',
                                 alignItems: 'center',
-                                background: selectedChats.includes(chat.id) ? 'rgba(109, 40, 217, 0.05)' : 'transparent'
+                                background: selectedChats.includes(chat.id) ? 'rgba(109, 40, 217, 0.08)' : 'transparent',
+                                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
                             }}
                         >
                             {isEditing && (
-                                <div style={{
-                                    width: '20px',
-                                    height: '20px',
-                                    borderRadius: '6px',
-                                    border: selectedChats.includes(chat.id) ? 'none' : '2px solid #E5E7EB',
-                                    background: selectedChats.includes(chat.id) ? 'var(--primary)' : 'transparent',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    transition: 'all 0.2s'
-                                }}>
-                                    {selectedChats.includes(chat.id) && <Check size={14} color="white" />}
-                                </div>
+                                <motion.div
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    style={{
+                                        width: '24px',
+                                        height: '24px',
+                                        borderRadius: '8px',
+                                        border: selectedChats.includes(chat.id) ? 'none' : '2px solid var(--input-bg)',
+                                        background: selectedChats.includes(chat.id) ? 'var(--primary)' : 'transparent',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    {selectedChats.includes(chat.id) && <Check size={16} color="white" strokeWidth={3} />}
+                                </motion.div>
                             )}
 
-                            <img src={chat.img} alt={chat.name} style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }} />
-                            <div style={{ flex: 1, borderBottom: '1px solid var(--input-bg)', paddingBottom: '12px', minWidth: 0 }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                            <div style={{ position: 'relative' }}>
+                                <motion.img
+                                    whileHover={{ scale: 1.1 }}
+                                    src={chat.img}
+                                    alt={chat.name}
+                                    style={{ width: '60px', height: '60px', borderRadius: '20px', objectFit: 'cover', border: '2px solid transparent' }}
+                                />
+                                {chat.unread && !isEditing && (
+                                    <div style={{ position: 'absolute', top: -4, right: -4, width: '12px', height: '12px', background: '#10B981', borderRadius: '50%', border: '2px solid var(--card-bg)' }} />
+                                )}
+                            </div>
+                            <div style={{ flex: 1, paddingBottom: '2px', minWidth: 0 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                                     <h3 style={{
-                                        fontSize: '16px',
-                                        fontWeight: '600',
+                                        fontSize: '17px',
+                                        fontWeight: '800',
                                         color: 'var(--text-main)',
                                         margin: 0,
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis'
                                     }}>{chat.name}</h3>
-                                    <span style={{ fontSize: '12px', color: chat.unread ? '#22C55E' : 'var(--text-muted)', whiteSpace: 'nowrap' }}>{chat.time}</span>
+                                    <span style={{ fontSize: '13px', color: chat.unread ? 'var(--primary)' : 'var(--text-muted)', fontWeight: '700' }}>{chat.time}</span>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <p style={{
@@ -190,30 +279,36 @@ export default function ChatsView() {
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis',
-                                        maxWidth: '240px'
+                                        maxWidth: '220px',
+                                        fontWeight: '500'
                                     }}>{chat.msg}</p>
                                     {chat.unread && !isEditing && (
-                                        <div style={{
-                                            background: '#22C55E',
-                                            color: '#000',
-                                            fontSize: '11px',
-                                            fontWeight: 'bold',
-                                            borderRadius: '50%',
-                                            minWidth: '20px',
-                                            height: '20px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            padding: '2px'
-                                        }}>
+                                        <motion.div
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            style={{
+                                                background: 'var(--primary)',
+                                                color: 'white',
+                                                fontSize: '11px',
+                                                fontWeight: '900',
+                                                borderRadius: '8px',
+                                                minWidth: '24px',
+                                                height: '24px',
+                                                padding: '0 6px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                boxShadow: '0 4px 12px rgba(109, 40, 217, 0.2)'
+                                            }}
+                                        >
                                             {chat.unread}
-                                        </div>
+                                        </motion.div>
                                     )}
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
             </div>
 
             {/* Right Main Area (Empty State) */}
@@ -223,58 +318,99 @@ export default function ChatsView() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '24px',
-                background: 'var(--page-bg)'
+                gap: '40px',
+                background: 'rgba(255,255,255,0.01)',
+                position: 'relative',
+                zIndex: 1
             }}>
-                <div style={{ display: 'flex', gap: '20px' }}>
-                    <ActionButton icon={<FileText size={24} />} label="Send document" />
-                    <ActionButton icon={<UserPlus size={24} />} label="Add contact" />
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={{ textAlign: 'center', maxWidth: '400px' }}
+                >
+                    <div style={{
+                        width: '100px',
+                        height: '100px',
+                        background: 'rgba(109, 40, 217, 0.05)',
+                        borderRadius: '40px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 32px',
+                        color: 'var(--primary)'
+                    }}>
+                        <MessageSquare size={48} />
+                    </div>
+                    <h3 style={{ fontSize: '24px', fontWeight: '900', color: 'var(--text-main)', marginBottom: '16px' }}>Select a chat to start messaging</h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '16px', lineHeight: '1.6' }}>Choose from your existing conversations or start a new one to connect with your community.</p>
+                </motion.div>
+
+                <div style={{ display: 'flex', gap: '24px' }}>
+                    <ActionButton icon={<FileText size={28} />} label="Send document" />
+                    <ActionButton icon={<UserPlus size={28} />} label="Add contact" />
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }
 
 function FilterToken({ label, active }) {
     return (
-        <button style={{
-            background: active ? '#2D3436' : 'var(--input-bg)',
-            color: active ? '#22C55E' : 'var(--text-muted)',
-            border: 'none',
-            borderRadius: '20px',
-            padding: '6px 14px',
-            fontSize: '13px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap'
-        }}>
+        <motion.button
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+                background: active ? 'var(--primary)' : 'var(--input-bg)',
+                color: active ? 'white' : 'var(--text-muted)',
+                border: 'none',
+                borderRadius: '14px',
+                padding: '10px 20px',
+                fontSize: '14px',
+                fontWeight: '800',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                boxShadow: active ? '0 10px 20px rgba(109, 40, 217, 0.2)' : 'none'
+            }}
+        >
             {label}
-        </button>
+        </motion.button>
     );
 }
 
 function ActionButton({ icon, label }) {
     return (
-        <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '12px',
-            cursor: 'pointer'
-        }}>
-            <div style={{
-                width: '64px',
-                height: '64px',
-                background: '#353b44',
-                borderRadius: '16px',
+        <motion.div
+            whileHover={{ y: -5 }}
+            style={{
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center',
-                color: '#9CA3AF'
-            }}>
+                gap: '16px',
+                cursor: 'pointer'
+            }}
+        >
+            <motion.div
+                whileHover={{ scale: 1.1, background: 'var(--primary)', color: 'white', boxShadow: '0 20px 40px rgba(109, 40, 217, 0.2)' }}
+                style={{
+                    width: '80px',
+                    height: '80px',
+                    background: 'var(--card-bg)',
+                    borderRadius: '28px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--primary)',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.03)',
+                    border: '1px solid var(--input-bg)',
+                    transition: 'all 0.3s ease'
+                }}
+            >
                 {icon}
-            </div>
-            <span style={{ color: '#9CA3AF', fontSize: '14px' }}>{label}</span>
-        </div>
+            </motion.div>
+            <span style={{ color: 'var(--text-main)', fontSize: '14px', fontWeight: '700' }}>{label}</span>
+        </motion.div>
     );
 }
+
+
