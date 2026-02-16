@@ -7,3 +7,9 @@ build
 .DS_Store
 .vscode
 backend/database.sqlite
+*.zip
+*.mp4
+*.gif
+*.png
+*.jpg
+*.jpeg
