@@ -144,6 +144,34 @@ export default function Login() {
                     >
                         Sign In
                     </motion.button>
+
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        type="button"
+                        onClick={() => {
+                            const mockUser = {
+                                id: 'demo-user',
+                                name: 'Guest User',
+                                email: 'guest@example.com',
+                                token: 'demo-token'
+                            };
+                            localStorage.setItem('token', mockUser.token);
+                            localStorage.setItem('user', JSON.stringify(mockUser));
+                            navigate('/dashboard');
+                        }}
+                        className="btn"
+                        style={{
+                            width: '100%',
+                            padding: '16px',
+                            marginTop: '10px',
+                            background: 'rgba(100, 80, 255, 0.1)',
+                            color: 'var(--primary)',
+                            border: '1px dashed var(--primary)'
+                        }}
+                    >
+                        Guest Access (Demo)
+                    </motion.button>
                 </form>
 
                 <div style={{ textAlign: 'center', margin: '30px 0' }}>

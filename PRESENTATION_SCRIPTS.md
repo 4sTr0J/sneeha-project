@@ -26,9 +26,15 @@ And just like that, we’re authenticated and ready to explore Sneha. From the v
 
 At the top, users see a personalized greeting, which immediately creates a sense of connection and belonging. This small detail helps users feel seen and welcomed.
 
-One of the most important features here is Mood Tracking. Users can quickly log how they’re feeling, and over time this data is visualized into charts that reveal emotional patterns, trends, and potential triggers.
+Mainly the forntend is built using React.js and Vite.js. The backend is built using Node.js and Express.js.
+Programming Language: JavaScript (ES6+)
+Runtime Environment: Node.js
 
-The dashboard also displays quick statistics such as days active, wellness activities completed, community participation, and AI support sessions. These insights help users stay motivated and aware of their progress.
+Inside the dashboard we have designed some specific tabs.
+
+
+we have a dark mode button which is animated with some motions
+
 
 Below that, recent activity keeps users engaged by reminding them of their wellness journey.
 
